@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">UniPic</string>
+    <string name="open_back">Open back </string>
+    <string name="open_go">Open go</string>
+</resources>
