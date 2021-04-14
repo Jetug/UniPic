@@ -3,11 +3,12 @@ package com.example.unipic.models
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.File
+import kotlin.math.min
+
+val supportedExtentions = arrayOf("jpg","jpeg","bmp","png","gif")
 
 class  MediaSearcher {
-    val supportedExtentions = arrayOf("jpg","jpeg","bmp","png","gif")
-
-    fun getFolderFiles(): ArrayList<File> {
+    fun getDirectories(): ArrayList<File> {
         val path = "/storage/emulated/0/"
 
         return scanFolder(File(path))
@@ -24,7 +25,7 @@ class  MediaSearcher {
         return imageList
     }
 
-    fun isMediaFile(file:File):Boolean = supportedExtentions.contains(file.extension)
+    private fun isMediaFile(file:File):Boolean = supportedExtentions.contains(file.extension)
 
     fun scanFolder(folder: File): ArrayList<File> {
         val result = ArrayList<File>()
@@ -51,29 +52,5 @@ class  MediaSearcher {
         return false
     }
 
-    fun getThumbnail(path: String): Bitmap? {
-        var bitmap: Bitmap? = null
-        val bmOptions = BitmapFactory.Options()
-        bitmap = BitmapFactory.decodeFile(path, bmOptions)
-        return bitmap
-    }
 
-     fun getFolderThumbnail(path: String): Bitmap? {
-        val folder = File(path)
-
-        val folderList = ArrayList<File>()
-        folderList.add(folder);
-
-        var bitmap: Bitmap? = null
-
-        val files = folder.listFiles()
-        for (currentFile in files) {
-            if (currentFile.isFile && supportedExtentions.contains(currentFile.extension)) {
-                val bmOptions = BitmapFactory.Options()
-                bitmap = getThumbnail(currentFile.absolutePath)
-                break
-            }
-        }
-        return bitmap
-    }
 }

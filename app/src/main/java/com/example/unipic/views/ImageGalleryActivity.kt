@@ -1,9 +1,11 @@
 package com.example.unipic.views
 
+import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.util.DisplayMetrics
 import androidx.annotation.IntegerRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +25,8 @@ import kotlinx.coroutines.*
 class ImageGalleryActivity : AppCompatActivity(){
 
     private val mediaSearcher = MediaSearcher()
+    private val colCount = 3;
+    private val imageGalleryActivity = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +37,12 @@ class ImageGalleryActivity : AppCompatActivity(){
         imagesRV.layoutManager = linearLayoutManager
         imagesRV.setHasFixedSize(true)
 
-        CoroutineScope(Dispatchers.IO).launch{
+        CoroutineScope(Dispatchers.Default).launch{
             initImageRV()
         }
     }
 
-    suspend fun initImageRV(){
+    private fun initImageRV(){
         val intent = intent
 
         if (intent != null){
@@ -46,9 +50,14 @@ class ImageGalleryActivity : AppCompatActivity(){
             val dir = File(dirPath as String)
             val imagesList = mediaSearcher.getImageFiles(dirPath as String)
 
-            imagesRV.adapter = ImageAdapter(imagesList, object: ItemOnClickListener {
-                override fun onClick(path: String) {
+            val size: DisplayMetrics = getDisplaySize(this)
+            val width = size.widthPixels / colCount
 
+            imagesRV.adapter = ImageAdapter(imagesList, width, object: ItemOnClickListener {
+                override fun onClick(path: String) {
+                    val imageActivityIntent = Intent(imageGalleryActivity, ImageActivity::class.java)
+                    imageActivityIntent.putExtra("imagePath", path)
+                    startActivity(imageActivityIntent)
                 }
             })
         }
