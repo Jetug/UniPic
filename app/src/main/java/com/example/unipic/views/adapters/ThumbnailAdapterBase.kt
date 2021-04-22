@@ -12,19 +12,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.reflect.typeOf
 
-class FolderAdapter(private var files: ArrayList<File>, private val size: Int, private var onClickListener: ItemOnClickListener): DragDropSwipeAdapter<File, FolderAdapter.FolderHolder>(files) {
-
-    class FolderHolder(view: View) : DragDropSwipeAdapter.ViewHolder(view) {
+abstract class ThumbnailAdapterBase<HolderType: ThumbnailAdapterBase.ThumbnailHolder>(private var files: ArrayList<File>, private val size: Int, private var onClickListener: ItemOnClickListener):
+        DragDropSwipeAdapter<File, HolderType>(files)
+{
+    open class ThumbnailHolder(view: View) : ViewHolder(view) {
         val nameTV: TextView = view.findViewById<View>(R.id.nameTV) as TextView
         val image: ImageView = view.findViewById<View>(R.id.imageIV) as ImageView
         val mainLayout = view.findViewById<View>(R.id.mainLayout) as ConstraintLayout
         val dragIcon = view.findViewById<View>(R.id.dragIcon) as ImageView
     }
 
-    override fun getViewHolder(itemView: View): FolderHolder = FolderHolder(itemView)
+    abstract fun onBindViewHolder2(item: File, viewHolder: HolderType, position: Int)
 
-    override fun onBindViewHolder(item: File, viewHolder: FolderHolder, position: Int) {
+    override fun onBindViewHolder(item: File, viewHolder: HolderType, position: Int) {
         viewHolder.image.setOnClickListener{
             onClickListener.onClick(item.absolutePath)
         }
@@ -32,20 +34,21 @@ class FolderAdapter(private var files: ArrayList<File>, private val size: Int, p
         setLayoutSize(viewHolder.mainLayout, size)
         viewHolder.nameTV.text = item.name
 
-        CoroutineScope(Dispatchers.Default).launch {
-            val bImage = imageCreator.getFolderThumbnail(item.absolutePath, size)
-            withContext(Dispatchers.Main){
-                viewHolder.image.setImageBitmap(bImage)
-            }
-        }
+        onBindViewHolder2(item, viewHolder, position)
     }
 
-    override fun getViewToTouchToStartDraggingItem(item: File, viewHolder: FolderHolder, position: Int): View {
-        // We return the view holder's view on which the user has to touch to drag the item
+
+    override fun getViewHolder(itemView: View): HolderType {
+        return ThumbnailHolder(itemView) as HolderType
+    }
+
+    override fun getViewToTouchToStartDraggingItem(item: File, viewHolder: HolderType, position: Int): View? {
         return viewHolder.dragIcon
     }
 
     override fun getItemViewType(position: Int): Int {
         return position
     }
+
+
 }

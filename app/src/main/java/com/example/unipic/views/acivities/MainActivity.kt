@@ -1,6 +1,7 @@
-package com.example.unipic.views
+package com.example.unipic.views.acivities
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -12,10 +13,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.example.unipic.R
-import com.example.unipic.models.MediaSearcher
 import com.example.unipic.models.interfaces.ItemOnClickListener
-import com.example.unipic.views.adapters.FolderAdapter
+import com.example.unipic.views.adapters.*
+import com.example.unipic.views.adapters.ThumbnailAdapterBase
 import ir.androidexception.filepicker.dialog.DirectoryPickerDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
@@ -34,34 +36,53 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener(::clickFun)
         testBtn.setOnClickListener(::clickTest)
 
-        val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        foldersRV.layoutManager = linearLayoutManager
-        foldersRV.setHasFixedSize(true)
 
-        CoroutineScope(Dispatchers.Main).launch {
-            val folderList = initFolderRV()
+        //CoroutineScope(Dispatchers.Main).launch {
+            initFolderRV();
+        //}
 
-            val size: DisplayMetrics = getDisplaySize(mainActivity)
-            val width = size.widthPixels / colCount
+        //requestPermission()
 
-            foldersRV.adapter = FolderAdapter(folderList, width, object : ItemOnClickListener {
-                override fun onClick(path: String) {
-                    val intent = Intent(mainActivity, ImageGalleryActivity::class.java)
-                    intent.putExtra("dirPath", path)
-                    startActivity(intent)
-                }
-            })
-        }
+        val pref = getSharedPreferences("Table", Context.MODE_PRIVATE)
+        val editor = pref.edit()
     }
-    private val mediaSearcher = MediaSearcher()
 
     private fun clickTest(v: View){
 
     }
 
-    private suspend fun initFolderRV(): ArrayList<File>{
-        return mediaSearcher.getDirectories()
+    private fun initFolderRV(){
+        val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        dndRV.layoutManager = linearLayoutManager
+        dndRV.setHasFixedSize(true)
+        dndRV.orientation = DragDropSwipeRecyclerView.ListOrientation.HORIZONTAL_LIST_WITH_UNCONSTRAINED_DRAGGING
+
+        val folderList = arrayListOf<File>(File("/storage/emulated/0/UniPic/"))
+
+        val size: DisplayMetrics = getDisplaySize(mainActivity)
+        val width = size.widthPixels / colCount
+
+        dndRV.adapter = FolderAdapter(folderList, width, object : ItemOnClickListener {
+            override fun onClick(path: String) {folderItemOnClick(path)}
+        })
+
+
+         fun addFolderItem(file:File){
+            CoroutineScope(Dispatchers.Main).launch{
+                (dndRV.adapter as FolderAdapter).addItem(file)
+            }
+         }
+
+        mediaSearcher.getDirectories(::addFolderItem)
+    }
+
+
+
+    private fun folderItemOnClick(path: String){
+        val intent = Intent(mainActivity, ImageGalleryActivity::class.java)
+        intent.putExtra("dirPath", path)
+        startActivity(intent)
     }
 
     private fun clickFun(v: View) {
@@ -75,7 +96,8 @@ class MainActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 },
-                { files: Array<File> ->
+                {
+                    files: Array<File> ->
                     Toast.makeText(
                         this@MainActivity,
                         files[0].path,
@@ -111,3 +133,10 @@ class MainActivity : AppCompatActivity() {
         )
     }
 }
+
+//             runBlocking {
+//                 withContext(Dispatchers.Main) {
+//                     (dndRV.adapter as FolderAdapter).addItem(file)
+//                     (dndRV.adapter as FolderAdapter).notifyDataSetChanged()
+//                 }
+//             }

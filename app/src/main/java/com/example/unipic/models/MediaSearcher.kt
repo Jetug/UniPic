@@ -1,17 +1,20 @@
 package com.example.unipic.models
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import kotlinx.coroutines.*
 import java.io.File
-import kotlin.math.min
 
 val supportedExtentions = arrayOf("jpg","jpeg","bmp","png","gif")
 
 class  MediaSearcher {
-    fun getDirectories(): ArrayList<File> {
-        val path = "/storage/emulated/0/"
 
-        return scanFolder(File(path))
+    private val dataSaver = DataSaver()
+    private val initPath = "/storage/emulated/0/"
+
+    fun getDirectories(onFind: (file: File) -> Unit ){
+        CoroutineScope(Dispatchers.Default).launch{
+            //dataSaver.getSavedDirs(onFind)
+            searchDirectories(File(initPath), onFind)
+        }
     }
 
     fun getImageFiles(path: String): ArrayList<File> {
@@ -27,19 +30,21 @@ class  MediaSearcher {
 
     private fun isMediaFile(file:File):Boolean = supportedExtentions.contains(file.extension)
 
-    fun scanFolder(folder: File): ArrayList<File> {
-        val result = ArrayList<File>()
+    private fun searchDirectories(folder: File, onFind: (file: File) -> Unit){
+        //val result = ArrayList<File>()
 
         for (file in folder.listFiles()){
             if(file.isDirectory){
                 if(isMediaFolder(file)){
-                    result.add(file)
+                    //result.add(file)
+                    onFind(file)
+                    dataSaver.saveDir(file.absolutePath)
                 }
-                val recRes = scanFolder(file)
-                result.addAll(recRes);
+                searchDirectories(file, onFind)
+                ///result.addAll(recRes);
             }
         }
-        return result
+        //return result
     }
 
     private fun isMediaFolder(folder: File): Boolean{

@@ -9,11 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UniPic">
-        <activity android:name=".views.ImageActivity"></activity>
-        <activity android:name=".views.ImageGalleryActivity" />
+        <activity android:name=".views.acivities.ImageActivity"></activity>
+        <activity android:name=".views.acivities.ImageGalleryActivity" />
         <activity android:name=".views.FolderPicker" />
         <activity android:name=".activity_activity_A" />
-        <activity android:name=".views.MainActivity">
+        <activity android:name=".views.acivities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -5,7 +5,7 @@
     android:id="@+id/lt"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.MainActivity">
+    tools:context=".views.acivities.MainActivity">
 
     <Button
         android:id="@+id/button"
@@ -17,8 +17,21 @@
         app:layout_constraintStart_toEndOf="@+id/testBtn"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/foldersRV"
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/foldersRV"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginBottom="1dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/testBtn">-->
+
+<!--    </androidx.recyclerview.widget.RecyclerView>-->
+
+    <com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
+        android:id="@+id/dndRV"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
@@ -26,9 +39,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/testBtn">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        app:layout_constraintTop_toBottomOf="@+id/testBtn"
+        app:item_layout="@layout/item_folder"/>
 
     <Button
         android:id="@+id/testBtn"

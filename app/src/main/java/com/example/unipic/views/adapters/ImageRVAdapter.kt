@@ -1,10 +1,13 @@
 package com.example.unipic.views.adapters
 
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.ViewGroup
+//import android.widget.ImageView
+//import android.widget.TextView
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.unipic.R
 import com.example.unipic.models.interfaces.ItemOnClickListener
 import kotlinx.coroutines.CoroutineScope
@@ -13,19 +16,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class ImageAdapter (var files: ArrayList<File>, val size:Int, var onClickListener: ItemOnClickListener)
-    : DragDropSwipeAdapter<File, ImageAdapter.ImageHolder>(files) {
 
-    class ImageHolder(view: View) : DragDropSwipeAdapter.ViewHolder(view) {
+class ImageRVAdapter(private val files: ArrayList<File>, var size: Int, private val onClickListener: ItemOnClickListener) : RecyclerView.Adapter<ImageRVAdapter.ImageHolder>() {
+
+    inner class ImageHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameTV: TextView = view.findViewById<View>(R.id.nameTV) as TextView
         val image: ImageView = view.findViewById<View>(R.id.imageIV) as ImageView
         val mainLayout = view.findViewById<View>(R.id.mainLayout) as ConstraintLayout
-        val dragIcon = view.findViewById<View>(R.id.dragIcon) as ImageView
     }
 
-    override fun getViewHolder(itemLayout: View): ImageAdapter.ImageHolder = ImageAdapter.ImageHolder(itemLayout)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_image, parent, false)
+        return ImageHolder(itemView)
+    }
 
-    override fun onBindViewHolder(item: File, holder: ImageAdapter.ImageHolder, position: Int) {
+    override fun onBindViewHolder(holder: ImageHolder, position: Int) {
         val file = files[position]
 
         holder.image.setOnClickListener{
@@ -44,12 +50,7 @@ class ImageAdapter (var files: ArrayList<File>, val size:Int, var onClickListene
         }
     }
 
-    override fun getViewToTouchToStartDraggingItem(item: File, viewHolder: ImageHolder, position: Int): View {
-        // We return the view holder's view on which the user has to touch to drag the item
-        return viewHolder.dragIcon
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return position
+    override fun getItemCount(): Int {
+        return files.size
     }
 }

@@ -1,9 +1,9 @@
-package com.example.unipic.views
+package com.example.unipic.views.acivities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.example.unipic.R
-import com.example.unipic.models.MediaSearcher
 import kotlinx.android.synthetic.main.activity_image.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,9 +13,8 @@ class ImageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)
-        CoroutineScope(Dispatchers.Default).launch {
+
             initImageActivity()
-        }
     }
 
     private fun initImageActivity(){

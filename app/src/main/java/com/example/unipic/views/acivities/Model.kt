@@ -1,4 +1,4 @@
-package com.example.unipic.views
+package com.example.unipic.views.acivities
 
 import android.app.Activity
 import android.util.DisplayMetrics
