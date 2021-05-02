@@ -22,6 +22,7 @@ import ir.androidexception.filepicker.dialog.DirectoryPickerDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.io.File
+import java.lang.reflect.GenericArrayType
 
 
 class MainActivity : AppCompatActivity() {
@@ -55,16 +56,16 @@ class MainActivity : AppCompatActivity() {
         val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         dndRV.layoutManager = linearLayoutManager
-        dndRV.setHasFixedSize(true)
-        dndRV.orientation = DragDropSwipeRecyclerView.ListOrientation.HORIZONTAL_LIST_WITH_UNCONSTRAINED_DRAGGING
+        //dndRV.setHasFixedSize(true)
+        dndRV.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_UNCONSTRAINED_DRAGGING
 
-        val folderList = arrayListOf<File>(File("/storage/emulated/0/UniPic/"))
+        //val folderList = arrayListOf<File>(File("/storage/emulated/0/UniPic/"))
 
         val size: DisplayMetrics = getDisplaySize(mainActivity)
         val width = size.widthPixels / colCount
 
-        dndRV.adapter = FolderAdapter(folderList, width, object : ItemOnClickListener {
-            override fun onClick(path: String) {folderItemOnClick(path)}
+        dndRV.adapter = FolderAdapter(ArrayList(), width, object : ItemOnClickListener {
+            override fun onClick(path: String) = folderItemOnClick(path)
         })
 
 

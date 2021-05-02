@@ -1,6 +1,9 @@
+
 package com.example.unipic.views.adapters
 
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -14,7 +17,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.reflect.typeOf
 
-abstract class ThumbnailAdapterBase<HolderType: ThumbnailAdapterBase.ThumbnailHolder>(private var files: ArrayList<File>, private val size: Int, private var onClickListener: ItemOnClickListener):
+abstract class ThumbnailAdapterBase< HolderType: ThumbnailAdapterBase.ThumbnailHolder>
+    ( private val size: Int, private var onClickListener: ItemOnClickListener, private var files: ArrayList<File> = ArrayList()):
         DragDropSwipeAdapter<File, HolderType>(files)
 {
     open class ThumbnailHolder(view: View) : ViewHolder(view) {
@@ -50,5 +54,12 @@ abstract class ThumbnailAdapterBase<HolderType: ThumbnailAdapterBase.ThumbnailHo
         return position
     }
 
+    private fun <T> createItem(view: View, method: (View) -> T): T {
+        return method(view)
+    }
 
+    inline fun <reified T : HolderType> getValue(): T {
+        val primaryConstructor = T::class.constructors.find { it.parameters.isEmpty() }
+        return primaryConstructor!!.call()
+    }
 }

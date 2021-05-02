@@ -18,11 +18,13 @@ class  MediaSearcher {
     }
 
     fun getImageFiles(path: String): ArrayList<File> {
-        val dir = File(path)
+        val dirs = File(path).listFiles()
         val imageList = ArrayList<File>()
-        for (file in dir.listFiles()){
-            if(isMediaFile(file)){
-                imageList.add(file)
+        if (dirs != null) {
+            for (file in dirs) {
+                if (isMediaFile(file)) {
+                    imageList.add(file)
+                }
             }
         }
         return imageList
@@ -30,32 +32,30 @@ class  MediaSearcher {
 
     private fun isMediaFile(file:File):Boolean = supportedExtentions.contains(file.extension)
 
-    private fun searchDirectories(folder: File, onFind: (file: File) -> Unit){
-        //val result = ArrayList<File>()
-
-        for (file in folder.listFiles()){
-            if(file.isDirectory){
-                if(isMediaFolder(file)){
-                    //result.add(file)
-                    onFind(file)
-                    dataSaver.saveDir(file.absolutePath)
+    private fun searchDirectories(directory: File, onFind: (file: File) -> Unit){
+        val directories:Array<File>? = directory.listFiles()
+        if (directories != null) {
+            for (file in directories) {
+                if (file.isDirectory) {
+                    if (isMediaFolder(file)) {
+                        onFind(file)
+                        //dataSaver.saveDir(file.absolutePath)
+                    }
+                    searchDirectories(file, onFind)
                 }
-                searchDirectories(file, onFind)
-                ///result.addAll(recRes);
             }
         }
-        //return result
     }
 
     private fun isMediaFolder(folder: File): Boolean{
-        val files:Array<File> = folder.listFiles()
-        for (file in files){
-            if (file.isFile && isMediaFile(file)){
-                return true
+        val files:Array<File>? = folder.listFiles()
+        if (files != null){
+            for (file in files){
+                if (file.isFile && isMediaFile(file)){
+                    return true
+                }
             }
         }
         return false
     }
-
-
 }

@@ -1,11 +1,6 @@
 package com.example.unipic.views.adapters
 
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeAdapter
-import com.example.unipic.R
 import com.example.unipic.models.interfaces.ItemOnClickListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +9,7 @@ import kotlinx.coroutines.withContext
 import java.io.*
 
 class FolderRvAdapter(private var files: ArrayList<File>, private val size: Int, private var onClickListener: ItemOnClickListener):
-        ThumbnailAdapterBase<FolderRvAdapter.FolderHolder>(files, size, onClickListener)
+        ThumbnailAdapterBase<FolderRvAdapter.FolderHolder>(size, onClickListener)
 {
     class FolderHolder(view: View) : ThumbnailHolder(view) {
 
