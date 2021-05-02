@@ -17,7 +17,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 
-class ImageRVAdapter(private val files: ArrayList<File>, var size: Int, private val onClickListener: ItemOnClickListener) : RecyclerView.Adapter<ImageRVAdapter.ImageHolder>() {
+class ImageRVAdapter(private val files: ArrayList<File>, var size: Int, private val onClickListener: ItemOnClickListener)
+    : RecyclerView.Adapter<ImageRVAdapter.ImageHolder>() {
 
     inner class ImageHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameTV: TextView = view.findViewById<View>(R.id.nameTV) as TextView
@@ -27,7 +28,7 @@ class ImageRVAdapter(private val files: ArrayList<File>, var size: Int, private 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_image, parent, false)
+            .inflate(R.layout.item_folder, parent, false)
         return ImageHolder(itemView)
     }
 

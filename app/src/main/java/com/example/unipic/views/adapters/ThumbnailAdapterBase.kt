@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.reflect.typeOf
 
-abstract class ThumbnailAdapterBase< HolderType: ThumbnailAdapterBase.ThumbnailHolder>
+abstract class ThumbnailAdapterBase<HolderType: ThumbnailAdapterBase.ThumbnailHolder>
     ( private val size: Int, private var onClickListener: ItemOnClickListener, private var files: ArrayList<File> = ArrayList()):
         DragDropSwipeAdapter<File, HolderType>(files)
 {

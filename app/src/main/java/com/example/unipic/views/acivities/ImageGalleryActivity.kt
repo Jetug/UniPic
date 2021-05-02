@@ -11,6 +11,7 @@ import com.example.unipic.R
 import com.example.unipic.models.MediaSearcher
 import com.example.unipic.models.interfaces.ItemOnClickListener
 import com.example.unipic.views.adapters.ImageAdapter
+import com.example.unipic.views.adapters.ImageRVAdapter
 import kotlinx.android.synthetic.main.activity_image_gallery.*
 
 class ImageGalleryActivity : AppCompatActivity(){
@@ -40,16 +41,16 @@ class ImageGalleryActivity : AppCompatActivity(){
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         imagesDRV.layoutManager = linearLayoutManager
         imagesDRV.setHasFixedSize(true)
-        imagesDRV.orientation = DragDropSwipeRecyclerView.ListOrientation.HORIZONTAL_LIST_WITH_UNCONSTRAINED_DRAGGING
-
+        //imagesDRV.orientation = DragDropSwipeRecyclerView.ListOrientation.HORIZONTAL_LIST_WITH_UNCONSTRAINED_DRAGGING
 
         val dirPath = intent.getCharSequenceExtra("dirPath")
+
         val imagesList = mediaSearcher.getImageFiles(dirPath as String)
 
         val size: DisplayMetrics = getDisplaySize(this)
         val width = size.widthPixels / colCount
 
-        imagesDRV.adapter = ImageAdapter(imagesList, width, object : ItemOnClickListener {
+        imagesDRV.adapter = ImageRVAdapter(imagesList, width, object : ItemOnClickListener {
             override fun onClick(path: String) {
                 val imageActivityIntent = Intent(imageGalleryActivity, ImageActivity::class.java)
                 imageActivityIntent.putExtra("imagePath", path)

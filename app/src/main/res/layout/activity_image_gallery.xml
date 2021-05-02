@@ -18,13 +18,13 @@
 
 <!--    </androidx.recyclerview.widget.RecyclerView>-->
 
-    <com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/imagesDRV"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:item_layout="@layout/item_folder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:item_layout="@layout/item_folder"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
