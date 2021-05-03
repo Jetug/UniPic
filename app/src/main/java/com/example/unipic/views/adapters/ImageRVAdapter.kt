@@ -17,13 +17,11 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 
-class ImageRVAdapter(private val files: ArrayList<File>, var size: Int, private val onClickListener: ItemOnClickListener)
-    : RecyclerView.Adapter<ImageRVAdapter.ImageHolder>() {
+class ImageRVAdapter(private val files: MutableList<File>, var size: Int, private val onClickListener: ItemOnClickListener)
+    : ThumbnailAdapterBaseRV<ImageRVAdapter.ImageHolder>(files, size, onClickListener)
+{
+    class ImageHolder(view: View) : ThumbnailHolder(view) {
 
-    inner class ImageHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val nameTV: TextView = view.findViewById<View>(R.id.nameTV) as TextView
-        val image: ImageView = view.findViewById<View>(R.id.imageIV) as ImageView
-        val mainLayout = view.findViewById<View>(R.id.mainLayout) as ConstraintLayout
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
@@ -33,25 +31,14 @@ class ImageRVAdapter(private val files: ArrayList<File>, var size: Int, private 
     }
 
     override fun onBindViewHolder(holder: ImageHolder, position: Int) {
+        super.onBindViewHolder(holder, position)
+
         val file = files[position]
-
-        holder.image.setOnClickListener{
-            onClickListener.onClick(file.absolutePath)
-        }
-
-        setLayoutSize(holder.mainLayout, size)
-        holder.nameTV.text = file.name
-        holder.image.setImageBitmap(null)
-
         CoroutineScope(Dispatchers.Default).launch {
             val bImage = imageCreator.getThumbnail(file.absolutePath, size)
             withContext(Dispatchers.Main){
                 holder.image.setImageBitmap(bImage)
             }
         }
-    }
-
-    override fun getItemCount(): Int {
-        return files.size
     }
 }

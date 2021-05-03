@@ -25,7 +25,7 @@ abstract class ThumbnailAdapterBase<HolderType: ThumbnailAdapterBase.ThumbnailHo
         val nameTV: TextView = view.findViewById<View>(R.id.nameTV) as TextView
         val image: ImageView = view.findViewById<View>(R.id.imageIV) as ImageView
         val mainLayout = view.findViewById<View>(R.id.mainLayout) as ConstraintLayout
-        val dragIcon = view.findViewById<View>(R.id.dragIcon) as ImageView
+        //val dragIcon = view.findViewById<View>(R.id.dragIcon) as ImageView
     }
 
     abstract fun onBindViewHolder2(item: File, viewHolder: HolderType, position: Int)
@@ -47,7 +47,7 @@ abstract class ThumbnailAdapterBase<HolderType: ThumbnailAdapterBase.ThumbnailHo
     }
 
     override fun getViewToTouchToStartDraggingItem(item: File, viewHolder: HolderType, position: Int): View? {
-        return viewHolder.dragIcon
+        return viewHolder.itemView
     }
 
     override fun getItemViewType(position: Int): Int {

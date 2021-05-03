@@ -11,8 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.*
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.example.unipic.R
 import com.example.unipic.models.interfaces.ItemOnClickListener
@@ -22,7 +21,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.io.File
 import java.lang.reflect.GenericArrayType
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,15 +34,9 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener(::clickFun)
         testBtn.setOnClickListener(::clickTest)
 
-
         //CoroutineScope(Dispatchers.Main).launch {
             initFolderRV();
         //}
-
-        //requestPermission()
-
-        val pref = getSharedPreferences("Table", Context.MODE_PRIVATE)
-        val editor = pref.edit()
     }
 
     private fun clickTest(v: View){
@@ -56,21 +48,21 @@ class MainActivity : AppCompatActivity() {
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         dndRV.layoutManager = linearLayoutManager
         dndRV.setHasFixedSize(true)
-        //dndRV.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_UNCONSTRAINED_DRAGGING
 
         //val folderList = arrayListOf<File>(File("/storage/emulated/0/UniPic/"))
 
         val size: DisplayMetrics = getDisplaySize(mainActivity)
         val width = size.widthPixels / colCount
 
-        dndRV.adapter = FolderRVAdapter(ArrayList(), width, object : ItemOnClickListener {
+        val adapter = FolderRVAdapter(ArrayList(), width, object : ItemOnClickListener {
             override fun onClick(path: String) = folderItemOnClick(path)
         })
+        dndRV.adapter = adapter
 
 
          fun addFolderItem(file:File){
             CoroutineScope(Dispatchers.Main).launch{
-                (dndRV.adapter as FolderRVAdapter).addItem(file)
+                (adapter).addItem(file)
             }
          }
 
@@ -131,10 +123,3 @@ class MainActivity : AppCompatActivity() {
         )
     }
 }
-
-//             runBlocking {
-//                 withContext(Dispatchers.Main) {
-//                     (dndRV.adapter as FolderAdapter).addItem(file)
-//                     (dndRV.adapter as FolderAdapter).notifyDataSetChanged()
-//                 }
-//             }

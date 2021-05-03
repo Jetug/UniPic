@@ -13,6 +13,8 @@ import com.example.unipic.models.interfaces.ItemOnClickListener
 import com.example.unipic.views.adapters.ImageAdapter
 import com.example.unipic.views.adapters.ImageRVAdapter
 import kotlinx.android.synthetic.main.activity_image_gallery.*
+import kotlinx.coroutines.Dispatchers
+import java.io.File
 
 class ImageGalleryActivity : AppCompatActivity(){
 
@@ -43,21 +45,30 @@ class ImageGalleryActivity : AppCompatActivity(){
         imagesDRV.setHasFixedSize(true)
         //imagesDRV.orientation = DragDropSwipeRecyclerView.ListOrientation.HORIZONTAL_LIST_WITH_UNCONSTRAINED_DRAGGING
 
-        val dirPath = intent.getCharSequenceExtra("dirPath")
+        val dirPath = intent.getCharSequenceExtra("dirPath")as String
 
-        val imagesList = mediaSearcher.getImageFiles(dirPath as String)
+        val imagesList = ArrayList<File>()// mediaSearcher.getImageFiles(dirPath )
 
         val size: DisplayMetrics = getDisplaySize(this)
         val width = size.widthPixels / colCount
-
-        imagesDRV.adapter = ImageRVAdapter(imagesList, width, object : ItemOnClickListener {
+        val adapter = ImageRVAdapter(imagesList, width, object : ItemOnClickListener {
             override fun onClick(path: String) {
                 val imageActivityIntent = Intent(imageGalleryActivity, ImageActivity::class.java)
                 imageActivityIntent.putExtra("imagePath", path)
                 startActivity(imageActivityIntent)
             }
         })
+
+        imagesDRV.adapter = adapter
+
+        fun addFolderItem(file: File){
+            (adapter).addItem(file)
+        }
+
+        mediaSearcher.getImageFiles(dirPath, ::addFolderItem)
     }
+
+
 
 //    private fun initImageRV(){
 //        val intent = intent

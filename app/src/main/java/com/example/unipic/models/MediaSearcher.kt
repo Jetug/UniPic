@@ -17,17 +17,17 @@ class  MediaSearcher {
         }
     }
 
-    fun getImageFiles(path: String): ArrayList<File> {
-        val dirs = File(path).listFiles()
-        val imageList = ArrayList<File>()
-        if (dirs != null) {
-            for (file in dirs) {
-                if (isMediaFile(file)) {
-                    imageList.add(file)
+    fun getImageFiles(path: String, onFind: (file: File) -> Unit) {
+        CoroutineScope(Dispatchers.Default).launch {
+            val dirs = File(path).listFiles()
+            if (dirs != null) {
+                for (file in dirs) {
+                    if (isMediaFile(file)) {
+                        onFind(file)
+                    }
                 }
             }
         }
-        return imageList
     }
 
     private fun isMediaFile(file:File):Boolean = supportedExtentions.contains(file.extension)
