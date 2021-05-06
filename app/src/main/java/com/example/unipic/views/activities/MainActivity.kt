@@ -1,26 +1,25 @@
-package com.example.unipic.views.acivities
+package com.example.unipic.views.activities
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.Menu
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.*
-import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.example.unipic.R
+import com.example.unipic.models.ThumbnailModel
 import com.example.unipic.models.interfaces.ItemOnClickListener
 import com.example.unipic.views.adapters.*
 import ir.androidexception.filepicker.dialog.DirectoryPickerDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.io.File
-import java.lang.reflect.GenericArrayType
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,15 +31,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         button.setOnClickListener(::clickFun)
-        testBtn.setOnClickListener(::clickTest)
 
-        //CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             initFolderRV();
-        //}
+        }
     }
 
-    private fun clickTest(v: View){
-
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
 
     private fun initFolderRV(){
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
          fun addFolderItem(file:File){
             CoroutineScope(Dispatchers.Main).launch{
-                (adapter).addItem(file)
+                (adapter).addItem(ThumbnailModel(file))
             }
          }
 

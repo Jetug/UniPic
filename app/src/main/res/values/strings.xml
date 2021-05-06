@@ -2,4 +2,8 @@
     <string name="app_name">UniPic</string>
     <string name="open_back">Open back </string>
     <string name="open_go">Open go</string>
+    <string name="name">Имя</string>
+    <string name="creationDate">Дата создания</string>
+    <string name="modificationDate">Дата изменения</string>
+    <string name="custom">Пользовательская</string>
 </resources>

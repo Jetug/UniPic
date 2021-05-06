@@ -1,20 +1,16 @@
-package com.example.unipic.views.acivities
+package com.example.unipic.views.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.unipic.R
 import kotlinx.android.synthetic.main.activity_image.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class ImageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)
 
-            initImageActivity()
+        initImageActivity()
     }
 
     private fun initImageActivity(){

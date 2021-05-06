@@ -1,23 +1,20 @@
 package com.example.unipic.views.adapters
 
+//import android.widget.ImageView
+//import android.widget.TextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-//import android.widget.ImageView
-//import android.widget.TextView
-import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.RecyclerView
 import com.example.unipic.R
+import com.example.unipic.models.ThumbnailModel
 import com.example.unipic.models.interfaces.ItemOnClickListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 
-class ImageRVAdapter(private val files: MutableList<File>, var size: Int, private val onClickListener: ItemOnClickListener)
+class ImageRVAdapter(private val files: MutableList<ThumbnailModel>, var size: Int, private val onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBaseRV<ImageRVAdapter.ImageHolder>(files, size, onClickListener)
 {
     class ImageHolder(view: View) : ThumbnailHolder(view) {
@@ -30,15 +27,20 @@ class ImageRVAdapter(private val files: MutableList<File>, var size: Int, privat
         return ImageHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: ImageHolder, position: Int) {
-        super.onBindViewHolder(holder, position)
-
-        val file = files[position]
-        CoroutineScope(Dispatchers.Default).launch {
-            val bImage = imageCreator.getThumbnail(file.absolutePath, size)
-            withContext(Dispatchers.Main){
-                holder.image.setImageBitmap(bImage)
+    override fun onBindViewHolder(viewHolder: ImageHolder, position: Int) {
+        super.onBindViewHolder(viewHolder, position)
+        viewHolder.setIsRecyclable(false);
+        val item = files[position]
+        //if (item.bitmap == null) {
+            CoroutineScope(Dispatchers.Default).launch {
+                val bImage = imageCreator.getThumbnail(item.file.absolutePath, size)
+                //item.bitmap = bImage
+                withContext(Dispatchers.Main) {
+                    viewHolder.image.setImageBitmap(bImage)
+                }
             }
-        }
+        //}
+        //else viewHolder.image.setImageBitmap(item.bitmap)
+
     }
 }

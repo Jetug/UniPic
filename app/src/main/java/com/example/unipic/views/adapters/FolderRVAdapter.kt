@@ -3,19 +3,15 @@ package com.example.unipic.views.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.RecyclerView
 import com.example.unipic.R
+import com.example.unipic.models.ThumbnailModel
 import com.example.unipic.models.interfaces.ItemOnClickListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.*
 
-class FolderRVAdapter(private var files: MutableList<File>, private val size: Int, private var onClickListener: ItemOnClickListener)
+class FolderRVAdapter(private var files: MutableList<ThumbnailModel>, private val size: Int, private var onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBaseRV<FolderRVAdapter.FolderHolder>(files, size, onClickListener)
 {
     class FolderHolder(view: View): ThumbnailHolder(view) {
@@ -28,16 +24,20 @@ class FolderRVAdapter(private var files: MutableList<File>, private val size: In
         return FolderHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: FolderHolder, position: Int) {
-        super.onBindViewHolder(holder, position)
-
-        val file = files[position]
-        CoroutineScope(Dispatchers.Default).launch {
-            val bImage = imageCreator.getFolderThumbnail(file.absolutePath, size)
-            withContext(Dispatchers.Main){
-                holder.image.setImageBitmap(bImage)
+    override fun onBindViewHolder(viewHolder: FolderHolder, position: Int) {
+        super.onBindViewHolder(viewHolder, position)
+        viewHolder.setIsRecyclable(false);
+        val item = files[position]
+        //if (item.bitmap == null) {
+            CoroutineScope(Dispatchers.Default).launch {
+                val bImage = imageCreator.getFolderThumbnail(item.file.absolutePath, size)
+                //item.bitmap = bImage
+                withContext(Dispatchers.Main) {
+                    viewHolder.image.setImageBitmap(bImage)
+                }
             }
-        }
+        //}
+        //else viewHo lder.image.setImageBitmap(item.bitmap)
     }
 
 

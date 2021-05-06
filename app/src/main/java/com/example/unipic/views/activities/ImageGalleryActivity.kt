@@ -1,19 +1,20 @@
-package com.example.unipic.views.acivities
+package com.example.unipic.views.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.example.unipic.R
 import com.example.unipic.models.MediaSearcher
+import com.example.unipic.models.ThumbnailModel
 import com.example.unipic.models.interfaces.ItemOnClickListener
-import com.example.unipic.views.adapters.ImageAdapter
 import com.example.unipic.views.adapters.ImageRVAdapter
+import com.example.unipic.views.adapters.SortingType
 import kotlinx.android.synthetic.main.activity_image_gallery.*
-import kotlinx.coroutines.Dispatchers
 import java.io.File
 
 class ImageGalleryActivity : AppCompatActivity(){
@@ -21,6 +22,7 @@ class ImageGalleryActivity : AppCompatActivity(){
     private val mediaSearcher = MediaSearcher()
     private val colCount = 3;
     private val imageGalleryActivity = this
+    private lateinit var imageAdapter: ImageRVAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +40,20 @@ class ImageGalleryActivity : AppCompatActivity(){
         initImageRV();
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_image_gallery, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.byName -> imageAdapter.sort(SortingType.NAME)
+            R.id.byCreationDate -> imageAdapter.sort(SortingType.CREATION_DATE)
+            R.id.byModificationDate -> imageAdapter.sort(SortingType.MODIFICATION_DATE)
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun initImageRV(){
         val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -47,7 +63,7 @@ class ImageGalleryActivity : AppCompatActivity(){
 
         val dirPath = intent.getCharSequenceExtra("dirPath")as String
 
-        val imagesList = ArrayList<File>()// mediaSearcher.getImageFiles(dirPath )
+        val imagesList = ArrayList<ThumbnailModel>()// mediaSearcher.getImageFiles(dirPath )
 
         val size: DisplayMetrics = getDisplaySize(this)
         val width = size.widthPixels / colCount
@@ -60,34 +76,12 @@ class ImageGalleryActivity : AppCompatActivity(){
         })
 
         imagesDRV.adapter = adapter
+        imageAdapter = adapter
 
         fun addFolderItem(file: File){
-            (adapter).addItem(file)
+            (adapter).addItem(ThumbnailModel(file))
         }
 
         mediaSearcher.getImageFiles(dirPath, ::addFolderItem)
     }
-
-
-
-//    private fun initImageRV(){
-//        val intent = intent
-//
-//        if (intent != null){
-//            val dirPath = intent.getCharSequenceExtra("dirPath")
-//            val dir = File(dirPath as String)
-//            val imagesList = mediaSearcher.getImageFiles(dirPath as String)
-//
-//            val size: DisplayMetrics = getDisplaySize(this)
-//            val width = size.widthPixels / colCount
-//
-//            imagesRV.adapter = ImageAdapter(imagesList, width, object: ItemOnClickListener {
-//                override fun onClick(path: String) {
-//                    val imageActivityIntent = Intent(imageGalleryActivity, ImageActivity::class.java)
-//                    imageActivityIntent.putExtra("imagePath", path)
-//                    startActivity(imageActivityIntent)
-//                }
-//            })
-//        }
-//    }
 }

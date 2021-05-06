@@ -1,13 +1,13 @@
 package com.example.unipic.models
 
-import java.io.*
+import java.io.File
 
 class DataSaver {
 
     private val programDirPath = "/storage/emulated/0/UniPic/"
     private val saveFilePath = "/storage/emulated/0/UniPic/Dirs.txt"
     private val programDir = createProgramDir()
-    private val saveFile = createSaveFile()
+    private lateinit var saveFile: File
 
 //    fun saveDir(path: ArrayList<File>){
 //        path.forEach{
@@ -16,9 +16,13 @@ class DataSaver {
 //    }
 //
 //    @JvmName("saveDir1")
+
+    init {
+        createSaveFile()
+    }
+
     fun saveDir(path: Collection<String>){
         path.forEach{
-
             writeToFile(it)
         }
     }
@@ -37,6 +41,34 @@ class DataSaver {
             }
         }
         //return paths
+    }
+
+    fun getSavedDirs(): ArrayList<File>{
+        createSaveFile()
+        val paths = ArrayList<File>()
+        val b = saveFile.exists()
+        saveFile.bufferedReader().forEachLine {
+            val file = File(it)
+            if(exists(file)){
+                paths.add(file)
+            }
+        }
+        return paths
+    }
+
+    fun normolinzeSaveFile(){
+        var text = ""
+        saveFile.bufferedReader().forEachLine {
+            val file = File(it)
+            if(file.exists()){
+                text += it
+                text+="\n"
+            }
+        }
+
+        saveFile.printWriter().use {
+            it.println(text)
+        }
     }
 
     private fun exists(file: File):Boolean{
@@ -61,11 +93,11 @@ class DataSaver {
         return saveFile;
     }
 
-    private fun createSaveFile(): File{
+    private fun createSaveFile(){
         val saveFile = File(saveFilePath)
         if(!saveFile.exists()){
             saveFile.createNewFile()
         }
-        return saveFile;
+        this.saveFile = saveFile;
     }
 }
