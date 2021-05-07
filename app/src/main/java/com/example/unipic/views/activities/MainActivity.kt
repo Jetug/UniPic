@@ -3,11 +3,14 @@ package com.example.unipic.views.activities
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private val colCount = 2;
     private val mainActivity = this;
+    private lateinit var folderAdapter: FolderRVAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +46,17 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.byName -> folderAdapter.sort(SortingType.NAME)
+            R.id.byCreationDate -> folderAdapter.sort(SortingType.CREATION_DATE)
+            R.id.byModificationDate -> folderAdapter.sort(SortingType.MODIFICATION_DATE)
+            R.id.custom -> folderAdapter.sort(SortingType.CUSTOM)
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun initFolderRV(){
         val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -57,8 +72,9 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(path: String) = folderItemOnClick(path)
         })
         dndRV.adapter = adapter
+        folderAdapter = adapter
 
-
+         @RequiresApi(Build.VERSION_CODES.O)
          fun addFolderItem(file:File){
             CoroutineScope(Dispatchers.Main).launch{
                 (adapter).addItem(ThumbnailModel(file))

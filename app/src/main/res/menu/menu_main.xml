@@ -4,8 +4,15 @@
     <item android:id="@+id/sorting"
         android:title="Sort"
         app:showAsAction="ifRoom">
+        <menu>
+            <item android:id="@+id/byName"
+                android:title="@string/name" />
+            <item android:id="@+id/byCreationDate"
+                android:title="@string/creationDate" />
+            <item android:id="@+id/byModificationDate"
+                android:title="@string/modificationDate" />
+            <item android:id="@+id/custom"
+                android:title="@string/custom" />
+        </menu>
     </item>
-<!--    <item android:id="@+id/misc"-->
-<!--        android:title="Sort">-->
-<!--    </item>-->
 </menu>

@@ -1,10 +1,12 @@
 package com.example.unipic.views.activities
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,16 +29,6 @@ class ImageGalleryActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_gallery)
-
-//        val linearLayoutManager = GridLayoutManager(applicationContext, 3)
-//        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-//        imagesRV.layoutManager = linearLayoutManager
-//        imagesRV.setHasFixedSize(true)
-//
-//        CoroutineScope(Dispatchers.Default).launch{
-//            initImageRV()
-//        }
-
         initImageRV();
     }
 
@@ -45,11 +37,13 @@ class ImageGalleryActivity : AppCompatActivity(){
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.byName -> imageAdapter.sort(SortingType.NAME)
             R.id.byCreationDate -> imageAdapter.sort(SortingType.CREATION_DATE)
             R.id.byModificationDate -> imageAdapter.sort(SortingType.MODIFICATION_DATE)
+            R.id.custom -> imageAdapter.sort(SortingType.CUSTOM)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -67,7 +61,7 @@ class ImageGalleryActivity : AppCompatActivity(){
 
         val size: DisplayMetrics = getDisplaySize(this)
         val width = size.widthPixels / colCount
-        val adapter = ImageRVAdapter(imagesList, width, object : ItemOnClickListener {
+        val adapter = ImageRVAdapter(imagesList, width, dirPath, object : ItemOnClickListener {
             override fun onClick(path: String) {
                 val imageActivityIntent = Intent(imageGalleryActivity, ImageActivity::class.java)
                 imageActivityIntent.putExtra("imagePath", path)
@@ -78,6 +72,7 @@ class ImageGalleryActivity : AppCompatActivity(){
         imagesDRV.adapter = adapter
         imageAdapter = adapter
 
+        @RequiresApi(Build.VERSION_CODES.O)
         fun addFolderItem(file: File){
             (adapter).addItem(ThumbnailModel(file))
         }

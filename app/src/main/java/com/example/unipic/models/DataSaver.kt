@@ -56,6 +56,40 @@ class DataSaver {
         return paths
     }
 
+    fun saveImagePositions(directoryPath: String, files:MutableList<ThumbnailModel>){
+        val sortingFileName = "Sort.txt"
+        val sortingFile = File(File(directoryPath), sortingFileName)
+
+        if (!sortingFile.exists()) {
+            sortingFile.createNewFile()
+        }
+
+        //CoroutineScope(Dispatchers.IO).launch{
+            var text = ""
+            for (file in files) {
+                text += file.file.name
+                text += "\n"
+            }
+            sortingFile.printWriter().use {
+                it.println(text)
+           }
+        //}
+    }
+
+    fun getImagePositions(directoryPath: String):MutableList<ThumbnailModel>{
+        val sortingFileName = "Sort.txt"
+        val sortingFile = File(File(directoryPath),sortingFileName)
+        val files = mutableListOf<ThumbnailModel>()
+        sortingFile.bufferedReader().forEachLine {
+            if(it != ""){
+                val file = File(it)
+                files.add(ThumbnailModel(file))
+            }
+
+        }
+        return files
+    }
+
     fun normolinzeSaveFile(){
         var text = ""
         saveFile.bufferedReader().forEachLine {
