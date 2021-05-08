@@ -15,12 +15,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.*
-import com.bumptech.glide.Glide
 import com.example.unipic.R
 import com.example.unipic.models.ThumbnailModel
 import com.example.unipic.models.interfaces.ItemOnClickListener
 import com.example.unipic.views.adapters.*
-import ir.androidexception.filepicker.dialog.DirectoryPickerDialog
+//import ir.androidexception.filepicker.dialog.DirectoryPickerDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -94,29 +93,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun clickFun(v: View) {
-        if (permissionGranted()) {
-            val directoryPickerDialog = DirectoryPickerDialog(
-                this,
-                {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Canceled!!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                },
-                {
-                    files: Array<File> ->
-                    Toast.makeText(
-                        this@MainActivity,
-                        files[0].path,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            )
-            directoryPickerDialog.show()
-        } else {
-            requestPermission()
-        }
+//        if (permissionGranted()) {
+//            val directoryPickerDialog = DirectoryPickerDialog(
+//                this,
+//                {
+//                    Toast.makeText(
+//                        this@MainActivity,
+//                        "Canceled!!",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                },
+//                {
+//                    files: Array<File> ->
+//                    Toast.makeText(
+//                        this@MainActivity,
+//                        files[0].path,
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            )
+//            directoryPickerDialog.show()
+//        } else {
+//            requestPermission()
+//        }
     }
 
     private fun permissionGranted(): Boolean {

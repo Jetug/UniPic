@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.unipic">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
         android:allowBackup="true"
         android:requestLegacyExternalStorage="true"
@@ -10,8 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UniPic">
-        <activity android:name=".views.activities.ImageActivity" />
-        <activity android:name=".views.activities.ImageGalleryActivity" />
+        <activity android:name=".views.activities.ImageGalleryActivity"/>
+        <activity android:name=".views.activities.ImageActivity"/>
         <activity android:name=".views.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,12 +22,5 @@
             </intent-filter>
         </activity>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <!--
-    Allows Glide to monitor connectivity status and restart failed requests if users go from a
-    a disconnected to a connected network state.
-    -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
 </manifest>

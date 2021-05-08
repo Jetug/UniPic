@@ -35,14 +35,14 @@ class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private val
 
     override fun onBindViewHolder(viewHolder: ImageHolder, position: Int) {
         super.onBindViewHolder(viewHolder, position)
-        viewHolder.setIsRecyclable(false);
+        //viewHolder.setIsRecyclable(false);
         val item = files[position]
-        CoroutineScope(Dispatchers.Default).launch {
-            val bImage = imageCreator.getThumbnail(item.file.absolutePath, size)
-            withContext(Dispatchers.Main) {
-                viewHolder.image.setImageBitmap(bImage)
-            }
-        }
+//        CoroutineScope(Dispatchers.Default).launch {
+//            val bImage = imageCreator.getThumbnail(item.file.absolutePath, size)
+//            withContext(Dispatchers.Main) {
+//                viewHolder.image.setImageBitmap(bImage)
+//            }
+//        }
         Glide.with(viewHolder.image.context).load(item.file).into(viewHolder.image)
     }
 
