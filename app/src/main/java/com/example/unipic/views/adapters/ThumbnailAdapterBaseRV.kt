@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeAdapter
 import com.example.unipic.R
 import com.example.unipic.models.DataSaver
 import com.example.unipic.models.ThumbnailModel
@@ -32,13 +31,13 @@ enum class Order{
 }
 
 abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.ThumbnailHolder>(
-        private var files: MutableList<ThumbnailModel>,
-        private val size: Int,
-        private var onClickListener: ItemOnClickListener)
+    private var files: MutableList<ThumbnailModel>,
+    private val size: Int,
+    private var onClickListener: ItemOnClickListener)
     :RecyclerView.Adapter<HolderType>()
 {
 
-    open class ThumbnailHolder(itemView: View) : DragDropSwipeAdapter.ViewHolder(itemView) {
+    open class ThumbnailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameTV: TextView = itemView.findViewById<View>(R.id.nameTV) as TextView
         val image: ImageView = itemView.findViewById<View>(R.id.imageIV) as ImageView
         val mainLayout = itemView.findViewById<View>(R.id.mainLayout) as ConstraintLayout
@@ -72,26 +71,26 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
         this.recyclerView = recyclerView
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.START or ItemTouchHelper.END or ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                0)
+            ItemTouchHelper.START or ItemTouchHelper.END or ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            0)
+        {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean
             {
-                override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean
-                {
-                    swapItems(viewHolder.adapterPosition, target.adapterPosition)
-                    return true
-                }
-
-                override fun onMoved(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, fromPos: Int, target: RecyclerView.ViewHolder, toPos: Int, x: Int, y: Int) {
-                    super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
-                }
-
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int){}
-
-                override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-                    this@ThumbnailAdapterBaseRV.clearView(recyclerView, viewHolder)
-                    super.clearView(recyclerView, viewHolder)
-                }
+                swapItems(viewHolder.adapterPosition, target.adapterPosition)
+                return true
             }
+
+            override fun onMoved(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, fromPos: Int, target: RecyclerView.ViewHolder, toPos: Int, x: Int, y: Int) {
+                super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int){}
+
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                this@ThumbnailAdapterBaseRV.clearView(recyclerView, viewHolder)
+                super.clearView(recyclerView, viewHolder)
+            }
+        }
 
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)

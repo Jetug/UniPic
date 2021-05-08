@@ -1,11 +1,10 @@
 package com.example.unipic.views.adapters
 
-//import android.widget.ImageView
-//import android.widget.TextView
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import com.example.unipic.R
 import com.example.unipic.models.DataSaver
@@ -36,36 +35,34 @@ class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private var
         super.onBindViewHolder(viewHolder, position)
         viewHolder.setIsRecyclable(false);
         val item = files[position]
-        CoroutineScope(Dispatchers.Default).launch {
-            val bImage = imageCreator.getThumbnail(item.file.absolutePath, size)
-            withContext(Dispatchers.Main) {
-                viewHolder.image.setImageBitmap(bImage)
-            }
-        }
+//        CoroutineScope(Dispatchers.Default).launch {
+//            val bImage = imageCreator.getThumbnail(item.file.absolutePath, size)
+//            withContext(Dispatchers.Main) {
+//                viewHolder.image.setImageBitmap(bImage)
+//            }
+//        }
+
+        //Glide.with(viewHolder.image.context).load(item.file).into(viewHolder.image)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun sort(sortingType: SortingType, reverse: Boolean) {
         if (sortingType == SortingType.CUSTOM) {
-            //CoroutineScope(Dispatchers.Default).launch {
+            CoroutineScope(Dispatchers.Default).launch {
                 val custom = dataSaver.getImagePositions(directory)
-                val buff = mutableListOf<ThumbnailModel>()
-                for(c in custom){
-                    for(f in files){
-                        if(f.file.name == c.file.name){
-                            buff.add(f)
-                            break
+
+                for (i in 0 until custom.size){
+                    for (j in 0 until files.size){
+                        if(files[j].file.name == custom[i].file.name){
+                            files.add(i, files[j])
+                            files.removeAt(j+1)
+                            //withContext(Dispatchers.Main){
+                            notifyItemMoved(j,i)
+                            //}
+                            break;
                         }
                     }
                 }
-
-                files = buff
-
-                //withContext(Dispatchers.Main){
-                    notifyDataSetChanged()
-                //}
-
-           //}
+            }
         }
         else super.sort(sortingType, reverse)
     }
