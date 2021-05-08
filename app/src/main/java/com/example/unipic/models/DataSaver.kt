@@ -56,6 +56,10 @@ class DataSaver {
         return paths
     }
 
+    fun createImagePositionsFile(){
+
+    }
+
     fun saveImagePositions(directoryPath: String, files:MutableList<ThumbnailModel>){
         val sortingFileName = "Sort.txt"
         val sortingFile = File(File(directoryPath), sortingFileName)
@@ -80,12 +84,14 @@ class DataSaver {
         val sortingFileName = "Sort.txt"
         val sortingFile = File(File(directoryPath),sortingFileName)
         val files = mutableListOf<ThumbnailModel>()
-        sortingFile.bufferedReader().forEachLine {
-            if(it != ""){
-                val file = File(it)
-                files.add(ThumbnailModel(file))
-            }
 
+        if (sortingFile.exists()) {
+            sortingFile.bufferedReader().forEachLine {
+                if (it != "") {
+                    val file = File(it)
+                    files.add(ThumbnailModel(file))
+                }
+            }
         }
         return files
     }
@@ -124,7 +130,7 @@ class DataSaver {
         if(!saveFile.exists()){
             saveFile.mkdirs()
         }
-        return saveFile;
+        return saveFile
     }
 
     private fun createSaveFile(){
@@ -132,6 +138,6 @@ class DataSaver {
         if(!saveFile.exists()){
             saveFile.createNewFile()
         }
-        this.saveFile = saveFile;
+        this.saveFile = saveFile
     }
 }
