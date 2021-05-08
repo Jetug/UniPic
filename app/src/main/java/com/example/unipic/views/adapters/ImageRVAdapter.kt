@@ -1,12 +1,8 @@
 package com.example.unipic.views.adapters
 
-import android.content.Context
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.example.unipic.R
 import com.example.unipic.models.DataSaver
@@ -15,10 +11,9 @@ import com.example.unipic.models.interfaces.ItemOnClickListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
-class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private val context: Context, private var size: Int, private val directory: String, onClickListener: ItemOnClickListener)
+class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private var size: Int, private val directory: String, onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBaseRV<ImageRVAdapter.ImageHolder>(files, size, onClickListener)
 {
     private val dataSaver = DataSaver()
@@ -43,7 +38,12 @@ class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private val
 //                viewHolder.image.setImageBitmap(bImage)
 //            }
 //        }
-        Glide.with(viewHolder.image.context).load(item.file).into(viewHolder.image)
+//        Glide.with(viewHolder.imageView.context)
+//            .load(item.file)
+//            .centerCrop()
+//            .into(viewHolder.imageView)
+
+        imageCreator.showThumbnail(item.file, viewHolder.imageView.context, viewHolder.imageView)
     }
 
     override fun sort(sortingType: SortingType, reverse: Boolean) {

@@ -1,7 +1,10 @@
 package com.example.unipic.models
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 import java.io.File
 import kotlin.math.min
 
@@ -11,6 +14,15 @@ class ImageCreator {
         var bitmap = getBitmap(path)
         bitmap = bitmap?.toSquare(size)
         return bitmap
+    }
+
+    fun showThumbnail(file: File ,context: Context, imageView: ImageView, animateGifs: Boolean = false){
+        val glide = Glide.with(context)
+            .load(file)
+            .centerCrop()
+        if(!animateGifs)
+            glide.dontAnimate()
+        glide.into(imageView)
     }
 
     fun getFolderThumbnail(path: String, size: Int): Bitmap? {

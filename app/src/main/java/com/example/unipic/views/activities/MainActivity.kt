@@ -34,10 +34,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        button.setOnClickListener(::clickFun)
-
-            //Glide.with(this).load(File("/storage/emulated/0/Pictures/@Test/T.jpg")).into(image);
-
         CoroutineScope(Dispatchers.Main).launch {
             initFolderRV();
         }
@@ -65,8 +61,6 @@ class MainActivity : AppCompatActivity() {
         dndRV.layoutManager = linearLayoutManager
         dndRV.setHasFixedSize(true)
 
-        //val folderList = arrayListOf<File>(File("/storage/emulated/0/UniPic/"))
-
         val size: DisplayMetrics = getDisplaySize(mainActivity)
         val width = size.widthPixels / colCount
 
@@ -90,32 +84,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(mainActivity, ImageGalleryActivity::class.java)
         intent.putExtra("dirPath", path)
         startActivity(intent)
-    }
-
-    private fun clickFun(v: View) {
-//        if (permissionGranted()) {
-//            val directoryPickerDialog = DirectoryPickerDialog(
-//                this,
-//                {
-//                    Toast.makeText(
-//                        this@MainActivity,
-//                        "Canceled!!",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                },
-//                {
-//                    files: Array<File> ->
-//                    Toast.makeText(
-//                        this@MainActivity,
-//                        files[0].path,
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            )
-//            directoryPickerDialog.show()
-//        } else {
-//            requestPermission()
-//        }
     }
 
     private fun permissionGranted(): Boolean {

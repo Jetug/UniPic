@@ -33,7 +33,7 @@ class FolderRVAdapter(private var files: MutableList<ThumbnailModel>, private va
                 val bImage = imageCreator.getFolderThumbnail(item.file.absolutePath, size)
                 //item.bitmap = bImage
                 withContext(Dispatchers.Main) {
-                    viewHolder.image.setImageBitmap(bImage)
+                    viewHolder.imageView.setImageBitmap(bImage)
                 }
             }
         //}

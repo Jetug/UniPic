@@ -39,7 +39,7 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
 
     open class ThumbnailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameTV: TextView = itemView.findViewById<View>(R.id.nameTV) as TextView
-        val image: ImageView = itemView.findViewById<View>(R.id.imageIV) as ImageView
+        val imageView: ImageView = itemView.findViewById<View>(R.id.imageIV) as ImageView
         val mainLayout = itemView.findViewById<View>(R.id.mainLayout) as ConstraintLayout
         //val dragIcon = itemView.findViewById<View>(R.id.dragIcon) as ImageView
 
@@ -52,7 +52,7 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
 
     override fun onBindViewHolder(viewHolder: HolderType, position: Int) {
         val item = files[position]
-        viewHolder.image.setOnClickListener{
+        viewHolder.imageView.setOnClickListener{
             onClickListener.onClick(item.file.absolutePath)
         }
 
