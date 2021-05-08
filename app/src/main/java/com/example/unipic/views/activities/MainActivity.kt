@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.*
+import com.bumptech.glide.Glide
 import com.example.unipic.R
 import com.example.unipic.models.ThumbnailModel
 import com.example.unipic.models.interfaces.ItemOnClickListener
@@ -35,6 +36,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         button.setOnClickListener(::clickFun)
+
+            //Glide.with(this).load(File("/storage/emulated/0/Pictures/@Test/T.jpg")).into(image);
 
         CoroutineScope(Dispatchers.Main).launch {
             initFolderRV();

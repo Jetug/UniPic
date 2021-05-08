@@ -1,11 +1,13 @@
 package com.example.unipic.views.adapters
 
+import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
+import com.bumptech.glide.Glide
 import com.example.unipic.R
 import com.example.unipic.models.DataSaver
 import com.example.unipic.models.ThumbnailModel
@@ -16,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private var size: Int, private val directory: String, onClickListener: ItemOnClickListener)
+class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private val context: Context, private var size: Int, private val directory: String, onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBaseRV<ImageRVAdapter.ImageHolder>(files, size, onClickListener)
 {
     private val dataSaver = DataSaver()
@@ -35,14 +37,13 @@ class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private var
         super.onBindViewHolder(viewHolder, position)
         viewHolder.setIsRecyclable(false);
         val item = files[position]
-//        CoroutineScope(Dispatchers.Default).launch {
-//            val bImage = imageCreator.getThumbnail(item.file.absolutePath, size)
-//            withContext(Dispatchers.Main) {
-//                viewHolder.image.setImageBitmap(bImage)
-//            }
-//        }
-
-        //Glide.with(viewHolder.image.context).load(item.file).into(viewHolder.image)
+        CoroutineScope(Dispatchers.Default).launch {
+            val bImage = imageCreator.getThumbnail(item.file.absolutePath, size)
+            withContext(Dispatchers.Main) {
+                viewHolder.image.setImageBitmap(bImage)
+            }
+        }
+        Glide.with(viewHolder.image.context).load(item.file).into(viewHolder.image)
     }
 
     override fun sort(sortingType: SortingType, reverse: Boolean) {

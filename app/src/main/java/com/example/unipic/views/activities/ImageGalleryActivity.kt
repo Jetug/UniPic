@@ -61,7 +61,7 @@ class ImageGalleryActivity : AppCompatActivity(){
 
         val size: DisplayMetrics = getDisplaySize(this)
         val width = size.widthPixels / colCount
-        val adapter = ImageRVAdapter(imagesList, width, dirPath, object : ItemOnClickListener {
+        val adapter = ImageRVAdapter(imagesList, this, width, dirPath, object : ItemOnClickListener {
             override fun onClick(path: String) {
                 val imageActivityIntent = Intent(imageGalleryActivity, ImageActivity::class.java)
                 imageActivityIntent.putExtra("imagePath", path)
