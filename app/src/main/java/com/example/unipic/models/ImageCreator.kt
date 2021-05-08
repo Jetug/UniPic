@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import java.io.File
 import kotlin.math.min
 
@@ -16,20 +17,30 @@ class ImageCreator {
         return bitmap
     }
 
-    fun showThumbnail(file: File ,context: Context, imageView: ImageView, animateGifs: Boolean = false){
+    fun showThumbnail(file: File, context: Context, imageView: ImageView, size: Int, animateGifs: Boolean = false){
         val glide = Glide.with(context)
             .load(file)
             .centerCrop()
+            .apply(RequestOptions().override(size, size))
         if(!animateGifs)
             glide.dontAnimate()
         glide.into(imageView)
     }
 
+    fun showFolderThumbnail(file: File, context: Context, imageView: ImageView, size: Int) {
+        val files = file.listFiles()
+        if(files != null) {
+            for (currentFile in files) {
+                if (currentFile.isFile && supportedExtentions.contains(currentFile.extension)) {
+                    showThumbnail(currentFile, context, imageView, size, false)
+                    break
+                }
+            }
+        }
+    }
+
     fun getFolderThumbnail(path: String, size: Int): Bitmap? {
         val folder = File(path)
-
-        val folderList = ArrayList<File>()
-        folderList.add(folder);
 
         var bitmap: Bitmap? = null
 

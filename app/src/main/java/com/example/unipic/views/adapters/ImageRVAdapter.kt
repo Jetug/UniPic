@@ -30,20 +30,8 @@ class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private var
 
     override fun onBindViewHolder(viewHolder: ImageHolder, position: Int) {
         super.onBindViewHolder(viewHolder, position)
-        //viewHolder.setIsRecyclable(false);
         val item = files[position]
-//        CoroutineScope(Dispatchers.Default).launch {
-//            val bImage = imageCreator.getThumbnail(item.file.absolutePath, size)
-//            withContext(Dispatchers.Main) {
-//                viewHolder.image.setImageBitmap(bImage)
-//            }
-//        }
-//        Glide.with(viewHolder.imageView.context)
-//            .load(item.file)
-//            .centerCrop()
-//            .into(viewHolder.imageView)
-
-        imageCreator.showThumbnail(item.file, viewHolder.imageView.context, viewHolder.imageView)
+        imageCreator.showThumbnail(item.file, viewHolder.imageView.context, viewHolder.imageView, size)
     }
 
     override fun sort(sortingType: SortingType, reverse: Boolean) {
@@ -67,11 +55,6 @@ class ImageRVAdapter(private var files: MutableList<ThumbnailModel>, private var
         }
         else super.sort(sortingType, reverse)
     }
-
-//    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-//        super.clearView(recyclerView, viewHolder)
-//        dataSaver.saveImagePositions(directory ,files)
-//    }
 
     override fun swapItems(fromPosition: Int, toPosition: Int){
         super.swapItems(fromPosition, toPosition)
