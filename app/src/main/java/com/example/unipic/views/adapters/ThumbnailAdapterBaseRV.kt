@@ -1,7 +1,7 @@
 package com.example.unipic.views.adapters
 
-import android.graphics.Bitmap
 import android.os.Build
+import android.view.KeyEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,6 +17,7 @@ import com.example.unipic.views.adapters.SortingType.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Files.readAttributes
 import java.nio.file.attribute.BasicFileAttributes
@@ -26,40 +27,88 @@ enum class SortingType{
     NAME, CREATION_DATE, MODIFICATION_DATE, CUSTOM
 }
 
+
+
 enum class Order{
     UP, DOWN
 }
 
 abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.ThumbnailHolder>(
-    private var files: MutableList<ThumbnailModel>,
-    private val size: Int,
-    private var onClickListener: ItemOnClickListener)
+        var files: MutableList<ThumbnailModel>,
+        private val size: Int,
+        private var onClickListener: ItemOnClickListener)
     :RecyclerView.Adapter<HolderType>()
 {
-
     open class ThumbnailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameTV: TextView = itemView.findViewById<View>(R.id.nameTV) as TextView
         val imageView: ImageView = itemView.findViewById<View>(R.id.imageIV) as ImageView
         val mainLayout = itemView.findViewById<View>(R.id.mainLayout) as ConstraintLayout
+        val checkCircle = itemView.findViewById<View>(R.id.checkCircle) as ImageView
         //val dragIcon = itemView.findViewById<View>(R.id.dragIcon) as ImageView
-
-        private var buffImage: Bitmap? = null
     }
 
     private val dataSaver = DataSaver()
     private lateinit var recyclerView: RecyclerView
     private var sorting: SortingType = NAME
+    var selectionMode = false
+
+    val itemMap: MutableMap<Int, Boolean> = mutableMapOf()
+
+    init {
+        sort(sorting)
+        for((i, file) in files.withIndex()) {
+            itemMap[i] = false
+        }
+    }
+
+    var isDragEnabled = false
+
+    fun cancelSelecting(){
+        for ((i, file) in files.withIndex()){
+            itemMap[i] = false
+            notifyItemChanged(i)
+        }
+        selectionMode = false
+    }
 
     override fun onBindViewHolder(viewHolder: HolderType, position: Int) {
         val item = files[position]
+
+        fun select(){
+            if ( viewHolder.checkCircle.visibility == View.INVISIBLE){
+                viewHolder.checkCircle.visibility = View.VISIBLE
+                itemMap[position] = true
+            }
+            else{
+                viewHolder.checkCircle.visibility = View.INVISIBLE
+                itemMap[position] = false
+            }
+
+        }
+
+        viewHolder.checkCircle.visibility = View.INVISIBLE
+
+        viewHolder.imageView.setOnLongClickListener {
+            if(!isDragEnabled) {
+                selectionMode = true
+                select()
+            }
+            return@setOnLongClickListener true
+        }
+
         viewHolder.imageView.setOnClickListener{
-            onClickListener.onClick(item.file.absolutePath)
+            if (selectionMode || isDragEnabled){
+                select()
+            }
+            else onClickListener.onClick(item.file.absolutePath)
         }
 
         setLayoutSize(viewHolder.mainLayout, size)
         viewHolder.nameTV.text = item.file.name
+        val buff = itemMap[position]
+        if(buff == true)
+            viewHolder.checkCircle.visibility = View.VISIBLE
     }
-
 
     override fun getItemCount(): Int {
         return files.size
@@ -71,8 +120,8 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
         this.recyclerView = recyclerView
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.START or ItemTouchHelper.END or ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            0)
+                ItemTouchHelper.START or ItemTouchHelper.END or ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                0)
         {
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean
             {
@@ -80,15 +129,15 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
                 return true
             }
 
-            override fun onMoved(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, fromPos: Int, target: RecyclerView.ViewHolder, toPos: Int, x: Int, y: Int) {
-                super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
-            }
-
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int){}
 
             override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
                 this@ThumbnailAdapterBaseRV.clearView(recyclerView, viewHolder)
                 super.clearView(recyclerView, viewHolder)
+            }
+
+            override fun isLongPressDragEnabled(): Boolean {
+                return isDragEnabled
             }
         }
 
@@ -125,14 +174,33 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
                 files.sortBy { Date(it.file.lastModified()) }
                 reverse()
             }
+            CUSTOM -> {
+            }
         }
         notifyDataSetChanged()
+    }
+
+    fun reorderItems(custom: MutableList<ThumbnailModel>){
+        CoroutineScope(Dispatchers.Default).launch {
+            for (i in 0 until custom.size) {
+                for (j in 0 until files.size) {
+                    if (files[j].file.name == custom[i].file.name) {
+                        files.add(i, files[j])
+                        files.removeAt(j + 1)
+                        notifyItemMoved(j, i)
+                        break
+                    }
+                }
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addItem(file: ThumbnailModel){
         CoroutineScope(Dispatchers.Main).launch {
             files.add(file)
+            itemMap[files.size - 1] = false
+
             val position = files.indexOf(file)
 
             notifyItemInserted(position)
@@ -145,15 +213,9 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
         if (fromPosition < toPosition) {
             files.add(toPosition + 1, files[fromPosition])
             files.removeAt(fromPosition)
-//            for (i in fromPosition..toPosition - 1) {
-//                files[i] = files.set(i + 1, files[i]);
-//            }
         } else {
             files.add(toPosition, files[fromPosition])
             files.removeAt(fromPosition + 1)
-//            for (i in fromPosition..toPosition) {
-//                files[i] = files.set(i - 1, files[i]);
-//            }
         }
 
         notifyItemMoved(fromPosition, toPosition)

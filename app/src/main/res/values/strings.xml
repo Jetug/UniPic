@@ -6,4 +6,7 @@
     <string name="creationDate">Дата создания</string>
     <string name="modificationDate">Дата изменения</string>
     <string name="custom">Пользовательская</string>
+    <string name="rename">Переименвать</string>
+    <string name="editDate">Редактировать дату</string>
+    <string name="sort">Sort</string>
 </resources>

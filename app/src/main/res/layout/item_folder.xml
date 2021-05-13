@@ -25,7 +25,7 @@
     <TextView
         android:id="@+id/nameTV"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="36dp"
         android:scaleType="fitXY"
         android:shadowColor="@color/black"
         android:shadowDx="2"
@@ -35,11 +35,22 @@
         android:gravity="bottom"
         android:paddingTop="2dp"
         android:paddingLeft="3dp"
-        android:paddingBottom="2dp"
+        android:paddingBottom="1dp"
         android:paddingRight="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
          />
+
+    <ImageView
+        android:id="@+id/checkCircle"
+        android:visibility="invisible"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_check_circle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

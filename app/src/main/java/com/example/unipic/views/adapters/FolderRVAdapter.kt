@@ -15,12 +15,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class FolderRVAdapter(private var files: MutableList<ThumbnailModel>, private val size: Int, private var onClickListener: ItemOnClickListener)
+class FolderRVAdapter(files: MutableList<ThumbnailModel>, private val size: Int, private var onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBaseRV<FolderRVAdapter.FolderHolder>(files, size, onClickListener)
 {
-    class FolderHolder(view: View): ThumbnailHolder(view) {
-
-    }
+    class FolderHolder(view: View): ThumbnailHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderRVAdapter.FolderHolder {
         val itemView = LayoutInflater.from(parent.context)

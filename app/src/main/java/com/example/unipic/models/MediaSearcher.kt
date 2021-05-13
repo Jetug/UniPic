@@ -24,7 +24,7 @@ class  MediaSearcher {
         }
     }
 
-    fun getImageFiles(path: String, onFind: (file: File) -> Unit) {
+    fun showImageFiles(path: String, onFind: (file: File) -> Unit) {
         CoroutineScope(Dispatchers.Default).launch {
             val dirs = File(path).listFiles()
             if (dirs != null) {
@@ -35,6 +35,20 @@ class  MediaSearcher {
                 }
             }
         }
+    }
+
+    fun getImageFiles(path: String): MutableList<File> {
+
+        val result = mutableListOf<File>()
+            val dirs = File(path).listFiles()
+            if (dirs != null) {
+                for (file in dirs) {
+                    if (isMediaFile(file)) {
+                        result.add(file)
+                    }
+                }
+            }
+        return result
     }
 
     private fun isMediaFile(file:File):Boolean = supportedExtentions.contains(file.extension)

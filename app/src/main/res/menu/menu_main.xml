@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/positionCB"
+        android:title=""
+        app:actionViewClass="com.google.android.material.switchmaterial.SwitchMaterial"
+        app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/sorting"
-        android:title="Sort"
+        android:title="@string/sort"
         app:showAsAction="ifRoom">
         <menu>
             <item android:id="@+id/byName"
@@ -15,4 +22,8 @@
                 android:title="@string/custom" />
         </menu>
     </item>
+    <item android:id="@+id/rename"
+        android:title="@string/rename"/>
+    <item android:id="@+id/editDate"
+        android:title="@string/editDate"/>
 </menu>

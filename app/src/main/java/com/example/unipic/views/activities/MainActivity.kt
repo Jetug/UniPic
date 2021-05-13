@@ -1,33 +1,33 @@
 package com.example.unipic.views.activities
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
-import android.util.DisplayMetrics
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.Toast
+//import ir.androidexception.filepicker.dialog.DirectoryPickerDialog
+
+import android.*
+import android.content.*
+import android.content.pm.*
+import android.os.*
+import android.util.*
+import android.view.*
+import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.*
+import androidx.core.app.*
+import androidx.core.content.*
 import androidx.recyclerview.widget.*
 import com.example.unipic.R
-import com.example.unipic.models.ThumbnailModel
-import com.example.unipic.models.interfaces.ItemOnClickListener
+import com.example.unipic.models.*
+import com.example.unipic.models.interfaces.*
 import com.example.unipic.views.adapters.*
-//import ir.androidexception.filepicker.dialog.DirectoryPickerDialog
+import com.google.android.material.switchmaterial.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
-import java.io.File
+import java.io.*
+
 
 class MainActivity : AppCompatActivity() {
 
-    private val colCount = 2;
-    private val mainActivity = this;
+    private val colCount = 2
+    private val mainActivity = this
     private lateinit var folderAdapter: FolderRVAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,16 +35,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         CoroutineScope(Dispatchers.Main).launch {
-            initFolderRV();
+            initFolderRV()
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        if(menu != null){
+            val sw = menu.findItem(R.id.positionCB).actionView?.findViewById<SwitchMaterial>(R.id.positionCB)
+            sw?.setOnCheckedChangeListener(::onChecked)
+        }
         return true
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    private fun onChecked(buttonView: CompoundButton, isChecked: Boolean){
+        folderAdapter.isDragEnabled = isChecked
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.byName -> folderAdapter.sort(SortingType.NAME)
@@ -53,6 +60,16 @@ class MainActivity : AppCompatActivity() {
             R.id.custom -> folderAdapter.sort(SortingType.CUSTOM)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if(folderAdapter.selectionMode) {
+                folderAdapter.cancelSelecting()
+                return false
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     private fun initFolderRV(){
@@ -71,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         folderAdapter = adapter
 
          @RequiresApi(Build.VERSION_CODES.O)
-         fun addFolderItem(file:File){
+         fun addFolderItem(file: File){
             CoroutineScope(Dispatchers.Main).launch{
                 (adapter).addItem(ThumbnailModel(file))
             }
