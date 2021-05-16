@@ -27,8 +27,6 @@ enum class SortingType{
     NAME, CREATION_DATE, MODIFICATION_DATE, CUSTOM
 }
 
-
-
 enum class Order{
     UP, DOWN
 }
@@ -51,21 +49,19 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
     private lateinit var recyclerView: RecyclerView
     private var sorting: SortingType = NAME
     var selectionMode = false
-
-    val itemMap: MutableMap<Int, Boolean> = mutableMapOf()
+    private val selectedItems: MutableList<ThumbnailModel> = mutableListOf()
+    protected val allFiles: MutableList<ThumbnailModel> = mutableListOf()
 
     init {
         sort(sorting)
-        for((i, file) in files.withIndex()) {
-            itemMap[i] = false
-        }
     }
 
     var isDragEnabled = false
 
     fun cancelSelecting(){
         for ((i, file) in files.withIndex()){
-            itemMap[i] = false
+            files[i].isChecked = false
+            selectedItems.clear()
             notifyItemChanged(i)
         }
         selectionMode = false
@@ -77,11 +73,13 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
         fun select(){
             if ( viewHolder.checkCircle.visibility == View.INVISIBLE){
                 viewHolder.checkCircle.visibility = View.VISIBLE
-                itemMap[position] = true
+                files[position].isChecked = true
+                selectedItems.add(item)
             }
             else{
                 viewHolder.checkCircle.visibility = View.INVISIBLE
-                itemMap[position] = false
+                files[position].isChecked = false
+                selectedItems.remove(item)
             }
 
         }
@@ -105,8 +103,7 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
 
         setLayoutSize(viewHolder.mainLayout, size)
         viewHolder.nameTV.text = item.file.name
-        val buff = itemMap[position]
-        if(buff == true)
+        if(files[position].isChecked)
             viewHolder.checkCircle.visibility = View.VISIBLE
     }
 
@@ -195,18 +192,30 @@ abstract class ThumbnailAdapterBaseRV<HolderType : ThumbnailAdapterBaseRV.Thumbn
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun addItem(file: ThumbnailModel){
+    open fun addItem(file: ThumbnailModel){
         CoroutineScope(Dispatchers.Main).launch {
             files.add(file)
-            itemMap[files.size - 1] = false
-
             val position = files.indexOf(file)
-
             notifyItemInserted(position)
-
             sort(sorting)
         }
+    }
+
+    open fun removeItem(file: ThumbnailModel){
+        //CoroutineScope(Dispatchers.Main).launch {
+            var position = 0
+            for (i in 0 until files.size){
+                if (files[i] == file) {
+                    position = i
+                    break
+                }
+            }
+
+            files.removeAt(position)
+            notifyItemRemoved(position)
+
+            //sort(sorting)
+        //}
     }
 
     open fun swapItems(fromPosition: Int, toPosition: Int) {

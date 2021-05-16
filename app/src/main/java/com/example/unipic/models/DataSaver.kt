@@ -56,6 +56,19 @@ class DataSaver {
         return paths
     }
 
+    fun getNotHidenSavedDirs(): ArrayList<File>{
+        createSaveFile()
+        val paths = ArrayList<File>()
+        val b = saveFile.exists()
+        saveFile.bufferedReader().forEachLine {
+            val file = File(it)
+            if(exists(file)){
+                paths.add(file)
+            }
+        }
+        return paths
+    }
+
     fun createImagePositionsFile(){
 
     }

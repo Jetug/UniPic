@@ -22,8 +22,7 @@
                 android:title="@string/custom" />
         </menu>
     </item>
-    <item android:id="@+id/rename"
-        android:title="@string/rename"/>
-    <item android:id="@+id/editDate"
-        android:title="@string/editDate"/>
+
+    <item android:id="@+id/showHidden"
+        android:title="@string/show_hidden"/>
 </menu>

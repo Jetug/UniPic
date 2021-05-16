@@ -36,7 +36,7 @@ class ImageGalleryActivity : AppCompatActivity(){
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_image_gallery, menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if(menu != null){
             val sw = menu.findItem(R.id.positionCB).actionView?.findViewById<SwitchMaterial>(R.id.positionCB)
@@ -106,7 +106,16 @@ class ImageGalleryActivity : AppCompatActivity(){
                     buffList.add(file.file)
                 }
 
+                var pos = 0
+                for ((i, file) in buffList.withIndex()){
+                    if (file.absolutePath == path){
+                        pos = i
+                        break
+                    }
+                }
+
                 imageActivityIntent.putExtra("imagePath", path)
+                imageActivityIntent.putExtra("position", pos)
                 imageActivityIntent.putExtra("imageList", ArrayList<File>(buffList))
 
                 startActivity(imageActivityIntent)

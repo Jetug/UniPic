@@ -8,6 +8,7 @@ import android.widget.ImageView
 import com.example.unipic.R
 import com.example.unipic.models.ThumbnailModel
 import com.example.unipic.models.interfaces.ItemOnClickListener
+import com.example.unipic.models.isHidden
 import com.example.unipic.models.supportedExtentions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,26 @@ class FolderRVAdapter(files: MutableList<ThumbnailModel>, private val size: Int,
     : ThumbnailAdapterBaseRV<FolderRVAdapter.FolderHolder>(files, size, onClickListener)
 {
     class FolderHolder(view: View): ThumbnailHolder(view)
+
+    var hiddenFolders: MutableList<ThumbnailModel> = mutableListOf()
+    var usualFolders: MutableList<ThumbnailModel> = mutableListOf()
+
+    var showHidden: Boolean = false
+        set(value) {
+            CoroutineScope(Dispatchers.Default).launch {
+                if (value) {
+                    for (item in hiddenFolders) {
+                        super.addItem(item)
+                    }
+                } else {
+                    for (item in hiddenFolders) {
+                        removeItem(item)
+                    }
+                }
+
+                field = value
+            }
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderRVAdapter.FolderHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -32,4 +53,18 @@ class FolderRVAdapter(files: MutableList<ThumbnailModel>, private val size: Int,
         imageCreator.showFolderThumbnail(item.file, viewHolder.imageView.context, viewHolder.imageView, size)
     }
 
+    override fun addItem(file: ThumbnailModel) {
+        if(isHidden(file.file)){
+            hiddenFolders.add(file)
+        }
+        else{
+            usualFolders.add(file)
+            super.addItem(file)
+        }
+    }
+
+//    override fun addItem(file: ThumbnailModel) {
+//        if(!isHidden(file.file))
+//            super.addItem(file)
+//    }
 }

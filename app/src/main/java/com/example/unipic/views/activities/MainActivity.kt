@@ -23,12 +23,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.io.*
 
-
 class MainActivity : AppCompatActivity() {
-
     private val colCount = 2
     private val mainActivity = this
     private lateinit var folderAdapter: FolderRVAdapter
+
+    private val directorySearcher = DirectorySearcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +58,16 @@ class MainActivity : AppCompatActivity() {
             R.id.byCreationDate -> folderAdapter.sort(SortingType.CREATION_DATE)
             R.id.byModificationDate -> folderAdapter.sort(SortingType.MODIFICATION_DATE)
             R.id.custom -> folderAdapter.sort(SortingType.CUSTOM)
+            R.id.showHidden -> {
+                if(!folderAdapter.showHidden) {
+                    folderAdapter.showHidden = true
+                    item.title = resources.getString(R.string.dont_show_hidden)
+                }
+                else{
+                    folderAdapter.showHidden = false
+                    item.title = resources.getString(R.string.show_hidden)
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -94,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             }
          }
 
-        mediaSearcher.getDirectories(::addFolderItem)
+        directorySearcher.getDirectories(::addFolderItem)
     }
 
     private fun folderItemOnClick(path: String){

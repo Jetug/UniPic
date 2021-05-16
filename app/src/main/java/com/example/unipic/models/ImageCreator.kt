@@ -9,6 +9,14 @@ import com.bumptech.glide.request.RequestOptions
 import java.io.File
 import kotlin.math.min
 
+fun showFullImage(file: File, context: Context, imageView: ImageView, animateGifs: Boolean = false){
+    val glide = Glide.with(context)
+        .load(file)
+    if(!animateGifs)
+        glide.dontAnimate()
+    glide.into(imageView)
+}
+
 class ImageCreator {
 
     fun getThumbnail(path: String, size: Int): Bitmap? {
@@ -16,6 +24,7 @@ class ImageCreator {
         bitmap = bitmap?.toSquare(size)
         return bitmap
     }
+
 
     fun showThumbnail(file: File, context: Context, imageView: ImageView, size: Int, animateGifs: Boolean = false){
         val glide = Glide.with(context)

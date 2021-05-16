@@ -9,4 +9,6 @@
     <string name="rename">Переименвать</string>
     <string name="editDate">Редактировать дату</string>
     <string name="sort">Sort</string>
+    <string name="show_hidden">Показать скрытые</string>
+    <string name="dont_show_hidden">Не показывать скрытые</string>
 </resources>
