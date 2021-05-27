@@ -21,8 +21,8 @@ class FolderRVAdapter(files: MutableList<ThumbnailModel>, private val size: Int,
 {
     class FolderHolder(view: View): ThumbnailHolder(view)
 
-    var hiddenFolders: MutableList<ThumbnailModel> = mutableListOf()
-    var usualFolders: MutableList<ThumbnailModel> = mutableListOf()
+    private var hiddenFolders: MutableList<ThumbnailModel> = mutableListOf()
+    private var usualFolders: MutableList<ThumbnailModel> = mutableListOf()
 
     var showHidden: Boolean = false
         set(value) {

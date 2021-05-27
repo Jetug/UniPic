@@ -2,37 +2,59 @@ package com.example.unipic.views.activities
 
 //import ir.androidexception.filepicker.dialog.DirectoryPickerDialog
 
-import android.*
-import android.content.*
-import android.content.pm.*
-import android.os.*
-import android.util.*
-import android.view.*
-import android.widget.*
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.util.DisplayMetrics
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.CompoundButton
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.*
-import androidx.core.app.*
-import androidx.core.content.*
-import androidx.recyclerview.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.unipic.R
-import com.example.unipic.models.*
-import com.example.unipic.models.interfaces.*
-import com.example.unipic.views.adapters.*
-import com.google.android.material.switchmaterial.*
+import com.example.unipic.models.DirectorySearcher
+import com.example.unipic.models.ThumbnailModel
+import com.example.unipic.models.interfaces.ItemOnClickListener
+import com.example.unipic.views.adapters.FolderRVAdapter
+import com.example.unipic.views.adapters.SortingType
+import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
-import java.io.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private val colCount = 2
     private val mainActivity = this
     private lateinit var folderAdapter: FolderRVAdapter
-
     private val directorySearcher = DirectorySearcher()
+
+    companion object {
+        const val REQUEST_PERMISSION = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSION)
+        }
+
+
+         var strSDCardPath = System.getenv("SECONDARY_STORAGE")
+        if (null == strSDCardPath || strSDCardPath.isEmpty()) {
+            strSDCardPath = System.getenv("EXTERNAL_SDCARD_STORAGE")
+        }
 
         CoroutineScope(Dispatchers.Main).launch {
             initFolderRV()

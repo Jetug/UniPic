@@ -21,7 +21,7 @@ class ImageViewerAdapter(private val images: ArrayList<File>): RecyclerView.Adap
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val image = images[position]
-        showFullImage(image, holder.imageView.context ,holder.imageView, )
+        showFullImage(image, holder.imageView.context ,holder.imageView, true)
     }
 
     override fun getItemCount(): Int {

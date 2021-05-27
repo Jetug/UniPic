@@ -29,7 +29,7 @@ class ImageRVAdapter(files: MutableList<ThumbnailModel>, private var size: Int, 
     override fun onBindViewHolder(viewHolder: ImageHolder, position: Int) {
         super.onBindViewHolder(viewHolder, position)
         val item = files[position]
-        imageCreator.showThumbnail(item.file, viewHolder.imageView.context, viewHolder.imageView, size)
+        imageCreator.showThumbnail(item.file, viewHolder.imageView.context, viewHolder.imageView, size, true)
     }
 
     override fun sort(sortingType: SortingType, reverse: Boolean) {
