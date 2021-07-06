@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.unipic">
+    package="com.example.unipicdev">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UniPic">
-        <activity android:name=".ImageViewer"></activity>
-        <activity android:name=".views.activities.ImageGalleryActivity" />
-        <activity android:name=".views.activities.ImageActivity" />
-        <activity android:name=".views.activities.MainActivity">
+        <activity android:name="com.example.unipicdev.views.activities.ImageGalleryActivity" />
+        <activity android:name="com.example.unipicdev.views.activities.ImageActivity" />
+        <activity android:name="com.example.unipicdev.views.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
