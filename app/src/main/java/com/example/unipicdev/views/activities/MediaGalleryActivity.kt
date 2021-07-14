@@ -14,18 +14,18 @@ import com.example.unipicdev.R
 import com.example.unipicdev.models.MediaSearcher
 import com.example.unipicdev.models.ThumbnailModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
-import com.example.unipicdev.views.adapters.ImageRVAdapter
+import com.example.unipicdev.views.adapters.MediaAdapter
 import com.example.unipicdev.views.adapters.SortingType
 import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.android.synthetic.main.activity_image_gallery.*
 import java.io.File
 
-class ImageGalleryActivity : AppCompatActivity(){
+class MediaGalleryActivity : AppCompatActivity(){
 
     private val mediaSearcher = MediaSearcher()
     private val colCount = 3
     private val imageGalleryActivity = this
-    private lateinit var imageAdapter: ImageRVAdapter
+    private lateinit var imageAdapter: MediaAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,7 +95,7 @@ class ImageGalleryActivity : AppCompatActivity(){
 
         val size: DisplayMetrics = getDisplaySize(this)
         val width = size.widthPixels / colCount
-        val adapter = ImageRVAdapter(this, imagesList, width, dirPath, object : ItemOnClickListener {
+        val adapter = MediaAdapter(this, imagesList, width, dirPath, object : ItemOnClickListener {
             override fun onClick(path: String) {
                 val imageActivityIntent = Intent(imageGalleryActivity, ImageActivity::class.java)
 

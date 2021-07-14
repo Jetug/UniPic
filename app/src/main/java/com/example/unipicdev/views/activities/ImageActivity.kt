@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.GestureDetector
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.views.adapters.ImageViewerAdapter
 import com.veinhorn.scrollgalleryview.ScrollGalleryView
@@ -32,6 +33,7 @@ class ImageActivity : AppCompatActivity()/*, ViewSwitcher.ViewFactory*/{
 
         val layoutManager = GalleryLayoutManager(GalleryLayoutManager.HORIZONTAL)
         layoutManager.attach(recyclerView, position)
+
 
         val adapter = ImageViewerAdapter(images)
         recyclerView.adapter = adapter

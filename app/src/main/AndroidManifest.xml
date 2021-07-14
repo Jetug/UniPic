@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UniPic">
-        <activity android:name="com.example.unipicdev.views.activities.ImageGalleryActivity" />
+        <activity android:name="com.example.unipicdev.views.activities.MediaGalleryActivity" />
         <activity android:name="com.example.unipicdev.views.activities.ImageActivity" />
         <activity android:name="com.example.unipicdev.views.activities.MainActivity">
             <intent-filter>

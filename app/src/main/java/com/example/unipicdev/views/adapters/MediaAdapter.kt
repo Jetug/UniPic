@@ -1,6 +1,7 @@
 package com.example.unipicdev.views.adapters
 
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -8,12 +9,16 @@ import com.example.unipicdev.R
 import com.example.unipicdev.models.DataSaver
 import com.example.unipicdev.models.ThumbnailModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
+import com.example.unipicdev.views.activities.MediaRenamingDialog
 
 
-class ImageRVAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailModel>, private var size: Int, private val directory: String, onClickListener: ItemOnClickListener)
-    : ThumbnailAdapterBaseRV<ImageRVAdapter.ImageHolder>(activity, files, size, onClickListener)
+class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailModel>, private var size: Int, private val directory: String, onClickListener: ItemOnClickListener)
+    : ThumbnailAdapterBase<MediaAdapter.ImageHolder>(activity, files, size, onClickListener)
 {
     private val dataSaver = DataSaver()
+
+    override val actionMenuId: Int
+        get() = R.menu.menu_media_work
 
     class ImageHolder(view: View) : ThumbnailHolder(view)
 
@@ -29,6 +34,23 @@ class ImageRVAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMo
         imageCreator.showThumbnail(item.file, viewHolder.imageView.context, viewHolder.imageView, size, true)
     }
 
+    override fun prepareActionMode(menu: Menu) {
+        val isOneItemSelected = isOneItemSelected()
+
+    }
+
+    override fun actionItemPressed(id: Int) {
+        if(selectedItems.isEmpty()) return
+
+        when(id){
+            R.id.rename -> rename()
+            R.id.options -> options()
+            R.id.editDate -> editDate()
+            R.id.moveTo -> moveTo()
+            R.id.copyTo -> copyTo()
+        }
+    }
+
     override fun sort(sortingType: SortingType, reverse: Boolean) {
         if (sortingType == SortingType.CUSTOM){
             val custom = dataSaver.getImagePositions(directory)
@@ -40,5 +62,44 @@ class ImageRVAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMo
     override fun swapItems(fromPosition: Int, toPosition: Int){
         super.swapItems(fromPosition, toPosition)
         dataSaver.saveImagePositions(directory ,files)
+    }
+
+    private fun rename(){
+        val dialog = MediaRenamingDialog(selectedItems.map{it.file})
+        val manager = activity.supportFragmentManager
+        dialog.show(manager, "RenamingDialog")
+
+        if(isOneItemSelected()){
+
+        }
+        else{
+
+        }
+    }
+
+    private fun options(){
+        if(isOneItemSelected()){
+
+        }
+        else{
+
+        }
+    }
+
+    private fun editDate(){
+        if(isOneItemSelected()){
+
+        }
+        else{
+
+        }
+    }
+
+    private fun moveTo(){
+
+    }
+
+    private fun copyTo(){
+
     }
 }

@@ -1,6 +1,7 @@
 package com.example.unipicdev.views.adapters
 
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -12,13 +13,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class FolderRVAdapter(activity: AppCompatActivity, files: MutableList<FolderModel>, private val size: Int, private var onClickListener: ItemOnClickListener)
-    : ThumbnailAdapterBaseRV<FolderRVAdapter.FolderHolder>(activity, mutableListOf(), size, onClickListener)
+class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderModel>, private val size: Int, private var onClickListener: ItemOnClickListener)
+    : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, mutableListOf(), size, onClickListener)
 {
     class FolderHolder(view: View): ThumbnailHolder(view)
 
     private var hiddenFolders: MutableList<FolderModel> = mutableListOf()
     private var usualFolders: MutableList<FolderModel> = mutableListOf()
+
+    override val actionMenuId: Int
+        get() = R.menu.menu_directory_work
 
     var showHidden: Boolean = false
         set(value) {
@@ -40,7 +44,7 @@ class FolderRVAdapter(activity: AppCompatActivity, files: MutableList<FolderMode
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderRVAdapter.FolderHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectoryAdapter.FolderHolder {
         val itemView = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_folder, parent, false)
         return FolderHolder(itemView)
@@ -57,7 +61,57 @@ class FolderRVAdapter(activity: AppCompatActivity, files: MutableList<FolderMode
 //        }
     }
 
+    override fun prepareActionMode(menu: Menu) {
+        val isOneItemSelected = isOneItemSelected()
 
+    }
+
+    override fun actionItemPressed(id: Int) {
+        if(selectedItems.isEmpty()) return
+
+        when(id){
+            R.id.rename -> rename()
+            R.id.options -> options()
+            R.id.editDate -> editDate()
+            R.id.moveTo -> moveTo()
+            R.id.copyTo -> copyTo()
+        }
+    }
+
+    private fun rename(){
+        if(isOneItemSelected()){
+
+        }
+        else{
+
+        }
+    }
+
+    private fun options(){
+        if(isOneItemSelected()){
+
+        }
+        else{
+
+        }
+    }
+
+    private fun editDate(){
+        if(isOneItemSelected()){
+
+        }
+        else{
+
+        }
+    }
+
+    private fun moveTo(){
+
+    }
+
+    private fun copyTo(){
+
+    }
 
     fun addItem(file: FolderModel) {
         if(isHidden(file.file)){
@@ -68,6 +122,8 @@ class FolderRVAdapter(activity: AppCompatActivity, files: MutableList<FolderMode
             super.addItem(file)
         }
     }
+
+
 
 //    override fun addItem(file: ThumbnailModel) {
 //        if(!isHidden(file.file))

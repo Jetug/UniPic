@@ -6,9 +6,15 @@
     <string name="creationDate">Дата создания</string>
     <string name="modificationDate">Дата изменения</string>
     <string name="custom">Пользовательская</string>
-    <string name="rename">Переименвать</string>
+    <string name="rename">Переименовать</string>
     <string name="editDate">Редактировать дату</string>
     <string name="sort">Sort</string>
     <string name="show_hidden">Показать скрытые</string>
     <string name="dont_show_hidden">Не показывать скрытые</string>
+    <string name="options">Свойства</string>
+    <string name="edit_date">Изменить дату</string>
+    <string name="move_to">Переместить</string>
+    <string name="copy_to">Копировать</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

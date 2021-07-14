@@ -15,7 +15,10 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.CompoundButton
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -26,21 +29,19 @@ import com.example.unipicdev.R
 import com.example.unipicdev.appContext
 import com.example.unipicdev.models.DirectorySearcher
 import com.example.unipicdev.models.FolderModel
-import com.example.unipicdev.models.ThumbnailModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
-import com.example.unipicdev.views.adapters.FolderRVAdapter
+import com.example.unipicdev.views.adapters.DirectoryAdapter
 import com.example.unipicdev.views.adapters.SortingType
 import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private val colCount = 2
     private val mainActivity = this
-    private lateinit var folderAdapter: FolderRVAdapter
+    private lateinit var folderAdapter: DirectoryAdapter
     private val directorySearcher = DirectorySearcher()
 
     companion object {
@@ -60,8 +61,7 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSION)
         }
 
-
-         var strSDCardPath = System.getenv("SECONDARY_STORAGE")
+        var strSDCardPath = System.getenv("SECONDARY_STORAGE")
         if (null == strSDCardPath || strSDCardPath.isEmpty()) {
             strSDCardPath = System.getenv("EXTERNAL_SDCARD_STORAGE")
         }
@@ -69,6 +69,14 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             initFolderRV()
         }
+
+
+//        val abTitleId = resources.getIdentifier("action_bar_title", "id", "android")
+//        findViewById<View>(abTitleId).setOnClickListener {
+//            //Toast.makeText(this, "Toasty", Toast.LENGTH_SHORT).show()
+//        }
+
+
 
     }
 
@@ -79,10 +87,6 @@ class MainActivity : AppCompatActivity() {
             sw?.setOnCheckedChangeListener(::onChecked)
         }
         return true
-    }
-
-    private fun onChecked(buttonView: CompoundButton, isChecked: Boolean){
-        folderAdapter.isDragEnabled = isChecked
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -105,6 +109,10 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun onChecked(buttonView: CompoundButton, isChecked: Boolean){
+        folderAdapter.isDragEnabled = isChecked
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if(folderAdapter.selectionMode) {
@@ -124,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         val size: DisplayMetrics = getDisplaySize(mainActivity)
         val width = size.widthPixels / colCount
 
-        val adapter = FolderRVAdapter(this, ArrayList(), width, object : ItemOnClickListener {
+        val adapter = DirectoryAdapter(this, ArrayList(), width, object : ItemOnClickListener {
             override fun onClick(path: String) = folderItemOnClick(path)
         })
         dndRV.adapter = adapter
@@ -141,7 +149,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun folderItemOnClick(path: String){
-        val intent = Intent(mainActivity, ImageGalleryActivity::class.java)
+        val intent = Intent(mainActivity, MediaGalleryActivity::class.java)
         intent.putExtra("dirPath", path)
         startActivity(intent)
     }
