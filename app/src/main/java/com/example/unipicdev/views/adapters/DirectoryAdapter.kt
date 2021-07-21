@@ -62,7 +62,7 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
     }
 
     override fun prepareActionMode(menu: Menu) {
-        val isOneItemSelected = isOneItemSelected()
+        val isOneItemSelected = isOneItemSelected
 
     }
 
@@ -75,11 +75,12 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
             R.id.editDate -> editDate()
             R.id.moveTo -> moveTo()
             R.id.copyTo -> copyTo()
+            R.id.delete -> delete()
         }
     }
 
     private fun rename(){
-        if(isOneItemSelected()){
+        if(isOneItemSelected){
 
         }
         else{
@@ -88,7 +89,7 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
     }
 
     private fun options(){
-        if(isOneItemSelected()){
+        if(isOneItemSelected){
 
         }
         else{
@@ -97,7 +98,7 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
     }
 
     private fun editDate(){
-        if(isOneItemSelected()){
+        if(isOneItemSelected){
 
         }
         else{

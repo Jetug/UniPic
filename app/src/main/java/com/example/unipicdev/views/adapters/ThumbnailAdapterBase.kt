@@ -1,13 +1,10 @@
 package com.example.unipicdev.views.adapters
 
 import android.annotation.SuppressLint
-import android.graphics.Typeface
 import android.os.Build
-import android.util.TypedValue
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -16,8 +13,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.models.DataSaver
-import com.example.unipicdev.models.ThumbnailActionModeCallback
 import com.example.unipicdev.models.ThumbnailModel
+import com.example.unipicdev.models.deleteFile
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.SortingType.*
 import kotlinx.coroutines.CoroutineScope
@@ -25,16 +22,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.nio.file.FileSystems
 import java.nio.file.Files.readAttributes
+import java.nio.file.Files.setAttribute
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 
 
 enum class SortingType{
-    NAME, CREATION_DATE, MODIFICATION_DATE, CUSTOM
+    NONE, NAME, CREATION_DATE, MODIFICATION_DATE, CUSTOM
 }
 
 enum class Order{
-    UP, DOWN
+    NONE, ASCENDING, DESCENDING
 }
 
 abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailHolder>(
@@ -52,34 +50,41 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         //val dragIcon = itemView.findViewById<View>(R.id.dragIcon) as ImageView
     }
 
-    private val dataSaver = DataSaver()
-    private lateinit var recyclerView: RecyclerView
-    private var sorting: SortingType = NAME
+    protected val selectedItem: ThumbnailModel
+        get() = selectedItems[0];
+    protected val selectedItemsCount: Int
+        get() = selectedItems.count()
+    protected val isOneItemSelected: Boolean
+        get() = selectedItemsCount == 1
+    protected val selectedCount
+        get() = "${selectedItems.size}/${files.count()}"
 
     protected val selectedItems: MutableList<ThumbnailModel> = mutableListOf()
     protected val allFiles: MutableList<ThumbnailModel> = mutableListOf()
-
     protected val resources = activity.resources!!
     protected var positionOffset = 0
-    protected val layoutInflater = activity.layoutInflater
-    protected var actionMode: android.view.ActionMode? = null
-    protected var actModeCallback: ThumbnailActionModeCallback
+    protected val layoutInflater: LayoutInflater = activity.layoutInflater
+    protected var actionMode: ActionMode? = null
+    protected var actionModeCallback: ActionMode.Callback
 
     private var actBarTextView: TextView? = null
     private var selectionCounter = ""
+    private val dataSaver = DataSaver()
+    private lateinit var recyclerView: RecyclerView
+    var sortingType: SortingType = NAME
 
     abstract val actionMenuId: Int
-
-    abstract fun prepareActionMode(menu: Menu)
-    abstract fun actionItemPressed(id: Int)
 
     var selectionMode = false
     var isDragEnabled = false
 
-    init {
-        sort(sorting)
+    abstract fun prepareActionMode(menu: Menu)
+    abstract fun actionItemPressed(id: Int)
 
-        actModeCallback = object:ThumbnailActionModeCallback(){
+    init {
+        sort(sortingType)
+
+        actionModeCallback = object: ActionMode.Callback {
             override fun onActionItemClicked(mode: android.view.ActionMode?, item: MenuItem?): Boolean {
                 if(item != null)
                     actionItemPressed(item.itemId)
@@ -87,97 +92,37 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
             }
 
             @SuppressLint("InflateParams")
-            override fun onCreateActionMode(mode: android.view.ActionMode?, menu: Menu?): Boolean {
-                isSelectable = true
+            override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+
                 actionMode = mode
 
                 if (mode != null) {
-//                    val customView: View = activity.layoutInflater.inflate(R.layout.actionbar_title, null)
-//                    val customTitle = customView.findViewById<View>(R.id.actionbarTitle) as TextView
-//                    customTitle.setOnClickListener {
-//                        if(selectedItems.size != files.size)
-//                            selectAll()
-//                        else
-//                            cancelSelecting()
-//                    }
-//                    mode.customView = customView
-
-//                    activity.supportActionBar?.apply {
-//                        customView = actionBarCustomTitle()
-//                        setDisplayHomeAsUpEnabled(true)
-//
-//                        customView.setOnClickListener {
-//                            if(selectedItems.size != files.size)
-//                                selectAll()
-//                            else
-//                                cancelSelecting()
-//                        }
-//
-//                        displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-//
-//                        setDisplayShowHomeEnabled(true)
-//                    }
-
-                    val actMode = actionMode
                     actBarTextView = layoutInflater.inflate(R.layout.actionbar_title, null) as TextView
                     actBarTextView!!.layoutParams = ActionBar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                    actMode!!.customView = actBarTextView
+                    actionMode!!.customView = actBarTextView
                     actBarTextView!!.setOnClickListener {
                         if(selectedItems.size != files.size)
                             selectAll()
                         else
                             unselectAll()
                     }
-
-                    //actBarTextView!!.text = getTitle()
-
                     activity.menuInflater.inflate(actionMenuId, menu)
-
                     updateTitle()
-
-                    //actMode.title = getTitle()
-                    //mode.title = getTitle()
                 }
                 return true
             }
 
-            override fun onPrepareActionMode(mode: android.view.ActionMode?, menu: Menu?): Boolean {
+            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
                 if(menu != null)
                     prepareActionMode(menu)
                 return true
             }
 
-            override fun onDestroyActionMode(mode: android.view.ActionMode?) {
+            override fun onDestroyActionMode(mode: ActionMode?) {
                 cancelSelecting()
                 actionMode = null;
             }
         }
-    }
-
-    fun selectAll(){
-        for ((i, _) in files.withIndex()){
-            files[i].isChecked = true
-            notifyItemChanged(i)
-        }
-        selectedItems.clear()
-        selectedItems.addAll(files)
-
-        selectionMode = true
-        updateTitle()
-    }
-
-    fun unselectAll(){
-        for ((i, _) in files.withIndex()){
-            files[i].isChecked = false
-            notifyItemChanged(i)
-        }
-        selectedItems.clear()
-        updateTitle()
-    }
-
-    fun cancelSelecting(){
-        unselectAll()
-        selectionMode = false
     }
 
     override fun onBindViewHolder(viewHolder: HolderType, position: Int) {
@@ -198,15 +143,19 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
                     actionMode?.finish()
                 }
             }
-//            selectionCounter = getTitle()
-//            actionMode?.title = selectionCounter
-
             updateTitle()
         }
 
-
-
         viewHolder.checkCircle.visibility = View.INVISIBLE
+
+        viewHolder.imageView.setOnClickListener{
+            if (selectionMode || isDragEnabled){
+                if(actionMode == null)
+                    startActionMode()
+                select()
+            }
+            else onClickListener.onClick(item.file.absolutePath)
+        }
 
         viewHolder.imageView.setOnLongClickListener {
             if(!isDragEnabled) {
@@ -214,30 +163,16 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
                 select()
             }
 
-
             if (actionMode == null && !isDragEnabled)
-                actionMode = activity.startActionMode(actModeCallback)
+                startActionMode()
 
             return@setOnLongClickListener true
-        }
-
-        viewHolder.imageView.setOnClickListener{
-            if (selectionMode || isDragEnabled){
-                select()
-            }
-            else onClickListener.onClick(item.file.absolutePath)
         }
 
         setLayoutSize(viewHolder.mainLayout, size)
         viewHolder.nameTV.text = item.file.name
         if(files[position].isChecked)
             viewHolder.checkCircle.visibility = View.VISIBLE
-    }
-
-    private fun getTitle(): String = "${selectedItems.size}/${files.count()}"
-
-    private fun updateTitle(){
-        actBarTextView?.text = getTitle()
     }
 
     override fun getItemCount(): Int {
@@ -291,19 +226,62 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
             CREATION_DATE -> {
                 files.sortBy {
                     val path = FileSystems.getDefault().getPath(it.file.absolutePath)
-                    val attr = readAttributes<BasicFileAttributes>(path, BasicFileAttributes::class.java)
+                    val attr = readAttributes(path, BasicFileAttributes::class.java)
                     return@sortBy attr.creationTime()
                 }
                 reverse()
             }
             MODIFICATION_DATE -> {
-                files.sortBy { Date(it.file.lastModified()) }
+                files.sortBy{ Date(it.file.lastModified())}
                 reverse()
             }
             CUSTOM -> {
             }
         }
         notifyDataSetChanged()
+        this.sortingType = sortingType
+    }
+
+    open fun addItem(file: ThumbnailModel){
+        CoroutineScope(Dispatchers.Main).launch {
+            files.add(file)
+            val position = files.indexOf(file)
+            notifyItemInserted(position)
+            sort(sortingType)
+        }
+    }
+
+    private fun getPositionOfItem(item: Any, list: List<Any>): Int{
+        for (i in list.indices){
+            if (list[i] == item) {
+                return i
+            }
+        }
+        return -1
+    }
+
+    open fun removeItem(file: ThumbnailModel){
+        val position = getPositionOfItem(file, files)
+        files.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    open fun changeItem(oldItem: ThumbnailModel, newItem: ThumbnailModel){
+        val position = getPositionOfItem(oldItem, files)
+        files[position] = newItem
+        notifyItemChanged(position)
+    }
+
+    open fun swapItems(fromPosition: Int, toPosition: Int) {
+        if (fromPosition < toPosition) {
+            files.add(toPosition + 1, files[fromPosition])
+            files.removeAt(fromPosition)
+        } else {
+            files.add(toPosition, files[fromPosition])
+            files.removeAt(fromPosition + 1)
+        }
+
+        notifyItemMoved(fromPosition, toPosition)
     }
 
     fun reorderItems(custom: MutableList<ThumbnailModel>){
@@ -321,72 +299,48 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
     }
 
-    open fun addItem(file: ThumbnailModel){
-        CoroutineScope(Dispatchers.Main).launch {
-            files.add(file)
-            val position = files.indexOf(file)
-            notifyItemInserted(position)
-            sort(sorting)
-        }
-    }
-
-    open fun removeItem(file: ThumbnailModel){
-        //CoroutineScope(Dispatchers.Main).launch {
-            var position = 0
-            for (i in 0 until files.size){
-                if (files[i] == file) {
-                    position = i
-                    break
-                }
-            }
-
-            files.removeAt(position)
-            notifyItemRemoved(position)
-
-            //sort(sorting)
-        //}
-    }
-
-    open fun swapItems(fromPosition: Int, toPosition: Int) {
-        if (fromPosition < toPosition) {
-            files.add(toPosition + 1, files[fromPosition])
-            files.removeAt(fromPosition)
-        } else {
-            files.add(toPosition, files[fromPosition])
-            files.removeAt(fromPosition + 1)
-        }
-
-        notifyItemMoved(fromPosition, toPosition)
-    }
-
     fun finishActMode() {
         actionMode?.finish()
     }
 
-    fun getSelectedItemsCount(): Int = selectedItems.count()
-
-    fun isOneItemSelected():Boolean = getSelectedItemsCount() == 1
-
-    private fun actionBarCustomTitle():TextView{
-        return TextView(activity).apply {
-            text = resources.getString(R.string.app_name);
-
-            val params = ActionBar.LayoutParams(
-                ActionBar.LayoutParams.WRAP_CONTENT,
-                ActionBar.LayoutParams.WRAP_CONTENT
-            )
-            params.gravity = Gravity.LEFT
-            layoutParams = params
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setTextAppearance(
-                    android.R.style.TextAppearance_Material_Widget_ActionBar_Title
-                )
-            }else{
-                // define your own text style
-                setTextSize(TypedValue.COMPLEX_UNIT_SP,17F)
-                setTypeface(null, Typeface.BOLD)
-            }
+    protected fun selectAll(){
+        for ((i, _) in files.withIndex()){
+            files[i].isChecked = true
+            notifyItemChanged(i)
         }
+        selectedItems.clear()
+        selectedItems.addAll(files)
+
+        selectionMode = true
+        updateTitle()
+    }
+
+    protected fun unselectAll(){
+        for ((i, _) in files.withIndex()){
+            files[i].isChecked = false
+            notifyItemChanged(i)
+        }
+        selectedItems.clear()
+        updateTitle()
+    }
+
+    protected fun cancelSelecting(){
+        unselectAll()
+        selectionMode = false
+    }
+
+    protected fun delete(){
+        selectedItems.forEach{
+            deleteFile(it.file)
+            removeItem(it)
+        }
+    }
+
+    private fun startActionMode(){
+        actionMode = activity.startActionMode(actionModeCallback)
+    }
+
+    private fun updateTitle(){
+        actBarTextView?.text = selectedCount
     }
 }

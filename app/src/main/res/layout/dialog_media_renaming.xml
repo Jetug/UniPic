@@ -4,10 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".views.activities.MediaRenamingDialog">
+    tools:context=".views.dialogs.MediaRenamingDialog">
 
     <EditText
         android:id="@+id/renameET"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"/>
 </LinearLayout>

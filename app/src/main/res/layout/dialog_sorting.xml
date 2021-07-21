@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sorting_dialog_scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/sorting_dialog_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/sortingBy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/byName"
+                android:text="@string/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <RadioButton android:id="@+id/byCreationDate"
+                android:text="@string/creationDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <RadioButton android:id="@+id/byModificationDate"
+                android:text="@string/modificationDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <RadioButton android:id="@+id/custom"
+                android:text="@string/custom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RadioGroup>
+
+        <include
+            layout="@layout/divider" />
+
+        <RadioGroup
+            android:id="@+id/sortingOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/ascending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ascending" />
+
+            <RadioButton
+                android:id="@+id/descending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/descending" />
+
+        </RadioGroup>
+
+        <include
+            layout="@layout/divider" />
+
+    <CheckBox
+        android:id="@+id/applyToAll"
+        android:text="@string/apply_to_all_folders"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    </LinearLayout>
+</ScrollView>

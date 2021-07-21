@@ -1,7 +1,5 @@
 package com.example.unipicdev.views.activities
 
-//import ir.androidexception.filepicker.dialog.DirectoryPickerDialog
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
@@ -15,10 +13,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.CompoundButton
-import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -31,7 +26,9 @@ import com.example.unipicdev.models.DirectorySearcher
 import com.example.unipicdev.models.FolderModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.DirectoryAdapter
+import com.example.unipicdev.views.adapters.Order
 import com.example.unipicdev.views.adapters.SortingType
+import com.example.unipicdev.views.dialogs.SortingDialog
 import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
@@ -91,6 +88,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
+            R.id.sorting -> Sort()
+
+
             R.id.byName -> folderAdapter.sort(SortingType.NAME)
             R.id.byCreationDate -> folderAdapter.sort(SortingType.CREATION_DATE)
             R.id.byModificationDate -> folderAdapter.sort(SortingType.MODIFICATION_DATE)
@@ -109,17 +109,26 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun Sort(){
+        val dialog = SortingDialog{
+            sorting, order ->
+
+            folderAdapter.sort(sorting, order == Order.DESCENDING)
+        }
+        dialog.show(supportFragmentManager, "SortingDialog")
+    }
+
     private fun onChecked(buttonView: CompoundButton, isChecked: Boolean){
         folderAdapter.isDragEnabled = isChecked
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if(folderAdapter.selectionMode) {
-                folderAdapter.cancelSelecting()
-                return false
-            }
-        }
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if(folderAdapter.selectionMode) {
+//                folderAdapter.cancelSelecting()
+//                return false
+//            }
+//        }
         return super.onKeyDown(keyCode, event)
     }
 

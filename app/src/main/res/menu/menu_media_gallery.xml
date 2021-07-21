@@ -8,8 +8,9 @@
         app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/sorting"
-        android:title="Sort"
-        app:showAsAction="ifRoom">
+        android:icon="@drawable/ic_baseline_sort_24"
+        app:showAsAction="ifRoom"
+        android:title="">
         <menu>
             <item android:id="@+id/byName"
                 android:title="@string/name" />
@@ -22,8 +23,8 @@
         </menu>
     </item>
 
-    <item android:id="@+id/rename"
-        android:title="@string/rename"/>
-    <item android:id="@+id/editDate"
-        android:title="@string/editDate"/>
+<!--    <item android:id="@+id/rename"-->
+<!--        android:title="@string/rename"/>-->
+<!--    <item android:id="@+id/editDate"-->
+<!--        android:title="@string/editDate"/>-->
 </menu>

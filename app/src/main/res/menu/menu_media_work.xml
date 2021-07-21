@@ -3,21 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="" />
-    <item android:title="" />
+    <item
+        android:title=""
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/delete"
+        android:icon="@drawable/ic_delete_24"
+        app:showAsAction="ifRoom"
+        android:title="@string/delete"/>
 
     <item android:id="@+id/rename"
         android:title="@string/rename"
         app:showAsAction="never"/>
+
     <item android:id="@+id/options"
         android:title="@string/options"
         app:showAsAction="never"/>
+
     <item android:id="@+id/editDate"
         android:title="@string/edit_date"
         app:showAsAction="never"/>
+
     <item android:id="@+id/moveTo"
         android:title="@string/move_to"
         app:showAsAction="never"/>
+
     <item android:id="@+id/copyTo"
         android:title="@string/copy_to"
         app:showAsAction="never"/>

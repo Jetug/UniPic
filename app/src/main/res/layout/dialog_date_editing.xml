@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.dialogs.DateEditingDialog">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:gravity="center_horizontal"
+                android:text="@string/initial_date" />
+
+            <EditText
+                android:id="@+id/day"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/month"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/year"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/hour"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/minute"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/second"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="+" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="110dp"
+                android:layout_height="35dp"
+                android:gravity="center_horizontal"
+                android:text="Шаг" />
+
+            <EditText
+                android:id="@+id/step_day"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/step_month"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/step_year"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+
+            <EditText
+                android:id="@+id/step_hour"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/step_minute"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/step_second"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="+" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

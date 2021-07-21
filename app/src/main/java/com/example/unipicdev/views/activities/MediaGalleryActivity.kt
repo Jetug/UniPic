@@ -34,7 +34,7 @@ class MediaGalleryActivity : AppCompatActivity(){
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_image_gallery, menu)
+        menuInflater.inflate(R.menu.menu_media_gallery, menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if(menu != null){
             val sw = menu.findItem(R.id.positionCB).actionView?.findViewById<SwitchMaterial>(R.id.positionCB)
@@ -54,12 +54,12 @@ class MediaGalleryActivity : AppCompatActivity(){
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if(imageAdapter.selectionMode) {
-                imageAdapter.cancelSelecting()
-                return false
-            }
-        }
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if(imageAdapter.selectionMode) {
+//                imageAdapter.cancelSelecting()
+//                return false
+//            }
+//        }
         return super.onKeyDown(keyCode, event)
     }
 
@@ -97,7 +97,7 @@ class MediaGalleryActivity : AppCompatActivity(){
         val width = size.widthPixels / colCount
         val adapter = MediaAdapter(this, imagesList, width, dirPath, object : ItemOnClickListener {
             override fun onClick(path: String) {
-                val imageActivityIntent = Intent(imageGalleryActivity, ImageActivity::class.java)
+                val imageActivityIntent = Intent(imageGalleryActivity, MediaViewerActivity::class.java)
 
                 for (file in imageAdapter.files)
                 {

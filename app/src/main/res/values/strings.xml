@@ -17,4 +17,13 @@
     <string name="copy_to">Копировать</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete">Удалить</string>
+    <string name="hide">Скрыть</string>
+    <string name="exclude">Исключить</string>
+    <string name="change_cover">Изменить обложку</string>
+    <string name="initial_date">Начальная дата</string>
+    <string name="ascending">По возрастанию</string>
+    <string name="descending">По убыванию</string>
+    <string name="apply_to_all_folders">Применить ко всем папкам</string>
+    <string name="sorting">Сортировка</string>
 </resources>

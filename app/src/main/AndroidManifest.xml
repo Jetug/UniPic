@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UniPic">
         <activity android:name="com.example.unipicdev.views.activities.MediaGalleryActivity" />
-        <activity android:name="com.example.unipicdev.views.activities.ImageActivity" />
+        <activity android:name="com.example.unipicdev.views.activities.MediaViewerActivity" />
         <activity android:name="com.example.unipicdev.views.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

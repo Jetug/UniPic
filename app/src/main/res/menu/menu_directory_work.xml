@@ -1,4 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="AlwaysShowAction" >
 
+    <item
+        android:title=""
+        app:showAsAction="always"/>
+    <item android:id="@+id/delete"
+        android:icon="@drawable/ic_delete_24"
+        app:showAsAction="always"
+        android:title="@string/delete"/>
+
+
+
+    <item android:id="@+id/rename"
+        android:title="@string/rename"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/options"
+        android:title="@string/options"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/hide"
+        android:title="@string/hide"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/exclude"
+        android:title="@string/exclude"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/changeСover"
+        android:title="@string/change_cover"
+        app:showAsAction="never"/>
 </menu>

@@ -2,21 +2,28 @@ package com.example.unipicdev.views.activities
 
 import android.os.Bundle
 import android.view.GestureDetector
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.views.adapters.ImageViewerAdapter
+import com.example.unipicdev.views.adapters.SortingType
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.veinhorn.scrollgalleryview.ScrollGalleryView
 import github.hellocsl.layoutmanager.gallery.GalleryLayoutManager
 import kotlinx.android.synthetic.main.activity_image.*
 import java.io.File
 
 
-class ImageActivity : AppCompatActivity()/*, ViewSwitcher.ViewFactory*/{
+class MediaViewerActivity : AppCompatActivity()/*, ViewSwitcher.ViewFactory*/{
 
     private var position = 0
     private var images = arrayListOf<File>()
+    private val currentMedia: File
+        get() = images[position]
+
     private lateinit var mImageSwitcher: ImageSwitcher
     private lateinit var mGestureDetector: GestureDetector
     private lateinit var galleryView: ScrollGalleryView
@@ -34,9 +41,21 @@ class ImageActivity : AppCompatActivity()/*, ViewSwitcher.ViewFactory*/{
         val layoutManager = GalleryLayoutManager(GalleryLayoutManager.HORIZONTAL)
         layoutManager.attach(recyclerView, position)
 
-
-        val adapter = ImageViewerAdapter(images)
+        val adapter = ImageViewerAdapter(this, images)
         recyclerView.adapter = adapter
+
+        supportActionBar?.title = ""
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_media, menu)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return super.onOptionsItemSelected(item)
     }
 
 //
