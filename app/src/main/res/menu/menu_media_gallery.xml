@@ -7,20 +7,25 @@
         app:actionViewClass="com.google.android.material.switchmaterial.SwitchMaterial"
         app:showAsAction="ifRoom"/>
 
+    <item android:id="@+id/checkMode"
+        android:title=""
+        android:icon="@drawable/ic_library_check_24"
+        app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/sorting"
         android:icon="@drawable/ic_baseline_sort_24"
         app:showAsAction="ifRoom"
-        android:title="">
-        <menu>
-            <item android:id="@+id/byName"
-                android:title="@string/name" />
-            <item android:id="@+id/byCreationDate"
-                android:title="@string/creationDate" />
-            <item android:id="@+id/byModificationDate"
-                android:title="@string/modificationDate" />
-            <item android:id="@+id/custom"
-                android:title="@string/custom" />
-        </menu>
+        android:title="@string/sorting">
+<!--        <menu>-->
+<!--            <item android:id="@+id/byName"-->
+<!--                android:title="@string/name" />-->
+<!--            <item android:id="@+id/byCreationDate"-->
+<!--                android:title="@string/creationDate" />-->
+<!--            <item android:id="@+id/byModificationDate"-->
+<!--                android:title="@string/modificationDate" />-->
+<!--            <item android:id="@+id/custom"-->
+<!--                android:title="@string/custom" />-->
+<!--        </menu>-->
     </item>
 
 <!--    <item android:id="@+id/rename"-->

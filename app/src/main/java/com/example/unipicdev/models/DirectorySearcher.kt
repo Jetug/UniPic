@@ -35,13 +35,13 @@ class DirectorySearcher {
 
     fun getDirectories(onFind: (file: FolderModel) -> Unit ){
         searchJob = CoroutineScope(Dispatchers.Default).launch{
-            showsSavedDirs(onFind)
+            showSavedDirs(onFind)
             searchDirectories(File(initPath), onFind)
             searchDirectories(File(sdPath), onFind)
         }
     }
 
-    private fun showsSavedDirs(onFind: (file: FolderModel) -> Unit){
+    private fun showSavedDirs(onFind: (file: FolderModel) -> Unit){
         savedDirectories = dataSaver.getSavedDirs()
         for(dir in savedDirectories){
             if(dir.exists())

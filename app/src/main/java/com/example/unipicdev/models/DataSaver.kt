@@ -33,6 +33,8 @@ class DataSaver() {
         writeToFile(path)
     }
 
+
+
     fun getSavedDirs(onFind: (file: File) -> Unit)/*: ArrayList<File>*/{
         //val paths = ArrayList<File>()
         saveFile.bufferedReader().forEachLine {
@@ -98,7 +100,7 @@ class DataSaver() {
         //}
     }
 
-    fun getImagePositions(directoryPath: String):MutableList<ThumbnailModel>{
+    fun getCustomMediaList(directoryPath: String):MutableList<ThumbnailModel>{
         val sortingFileName = "Sort.txt"
         val sortingFile = File(File(directoryPath),sortingFileName)
         val files = mutableListOf<ThumbnailModel>()
@@ -113,6 +115,23 @@ class DataSaver() {
         }
         return files
     }
+
+    fun getCustomMediaListF(directoryPath: String):MutableList<File>{
+        val sortingFileName = "Sort.txt"
+        val sortingFile = File(File(directoryPath),sortingFileName)
+        val files = mutableListOf<File>()
+
+        if (sortingFile.exists()) {
+            sortingFile.bufferedReader().forEachLine {
+                if (it != "") {
+                    val file = File(it)
+                    files.add(file)
+                }
+            }
+        }
+        return files
+    }
+
 
     fun normolinzeSaveFile(){
         var text = ""

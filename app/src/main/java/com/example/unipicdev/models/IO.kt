@@ -1,7 +1,9 @@
 package com.example.unipicdev.models
 
+import org.joda.time.DateTime
 import java.io.File
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 
@@ -37,6 +39,6 @@ fun renameFile(file: File, newName: String, args: String): File{
     return newUnicFile
 }
 
-fun changeFileDate(file: File, date: Date){
-    file.setLastModified(date.time)
+fun changeFileDate(file: File, date: DateTime){
+    file.setLastModified(date.toDate().time)
 }

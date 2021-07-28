@@ -12,9 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
-import com.example.unipicdev.models.DataSaver
-import com.example.unipicdev.models.ThumbnailModel
-import com.example.unipicdev.models.deleteFile
+import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.SortingType.*
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +45,6 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         val imageView: ImageView = itemView.findViewById<View>(R.id.imageIV) as ImageView
         val mainLayout = itemView.findViewById<View>(R.id.mainLayout) as ConstraintLayout
         val checkCircle = itemView.findViewById<View>(R.id.checkCircle) as ImageView
-        //val dragIcon = itemView.findViewById<View>(R.id.dragIcon) as ImageView
     }
 
     protected val selectedItem: ThumbnailModel
@@ -71,18 +68,30 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     private var selectionCounter = ""
     private val dataSaver = DataSaver()
     private lateinit var recyclerView: RecyclerView
-    var sortingType: SortingType = NAME
 
     abstract val actionMenuId: Int
 
+    var sortingType: SortingType = NAME
+    var sortingOrder: Order = Order.ASCENDING
+
+
     var selectionMode = false
+    get() = field
+    set(value) {
+        if (value)
+            startActionMode()
+//        else
+//            finishActionMode()
+        field = value
+    }
+
     var isDragEnabled = false
 
     abstract fun prepareActionMode(menu: Menu)
     abstract fun actionItemPressed(id: Int)
 
     init {
-        sort(sortingType)
+        //sort(sortingType)
 
         actionModeCallback = object: ActionMode.Callback {
             override fun onActionItemClicked(mode: android.view.ActionMode?, item: MenuItem?): Boolean {
@@ -125,6 +134,8 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
     }
 
+
+
     override fun onBindViewHolder(viewHolder: HolderType, position: Int) {
         val item = files[position]
 
@@ -133,6 +144,8 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
                 viewHolder.checkCircle.visibility = View.VISIBLE
                 files[position].isChecked = true
                 selectedItems.add(item)
+
+                updateTitle()
             }
             else{
                 viewHolder.checkCircle.visibility = View.INVISIBLE
@@ -142,8 +155,10 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
                 if(selectedItems.count() == 0){
                     actionMode?.finish()
                 }
+                else{
+                    updateTitle()
+                }
             }
-            updateTitle()
         }
 
         viewHolder.checkCircle.visibility = View.INVISIBLE
@@ -215,8 +230,11 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    open fun sort(sortingType: SortingType, reverse: Boolean = false){
-        fun reverse(){if(reverse) files.reverse()}
+    open fun sort(sortingType: SortingType, order: Order = Order.ASCENDING){
+        fun reverse()
+        {
+            if(order == Order.DESCENDING) files.reverse()
+        }
 
         when(sortingType){
             NAME -> {
@@ -232,11 +250,10 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
                 reverse()
             }
             MODIFICATION_DATE -> {
-                files.sortBy{ Date(it.file.lastModified())}
+                files.sortBy{ it.file.lastModified() }
                 reverse()
             }
-            CUSTOM -> {
-            }
+            else -> {}
         }
         notifyDataSetChanged()
         this.sortingType = sortingType
@@ -299,10 +316,6 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
     }
 
-    fun finishActMode() {
-        actionMode?.finish()
-    }
-
     protected fun selectAll(){
         for ((i, _) in files.withIndex()){
             files[i].isChecked = true
@@ -311,7 +324,7 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         selectedItems.clear()
         selectedItems.addAll(files)
 
-        selectionMode = true
+        //selectionMode = true
         updateTitle()
     }
 
@@ -338,6 +351,10 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
 
     private fun startActionMode(){
         actionMode = activity.startActionMode(actionModeCallback)
+    }
+
+    private fun finishActionMode() {
+        actionMode?.finish()
     }
 
     private fun updateTitle(){

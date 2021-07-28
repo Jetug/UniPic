@@ -5,13 +5,14 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import com.example.unipicdev.R
+import com.example.unipicdev.*
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.models.isHidden
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.Period
 
 class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderModel>, private val size: Int, private var onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, mutableListOf(), size, onClickListener)
@@ -41,7 +42,7 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
         }
 
     init{
-
+        sort(directorySortingType, directorySortingOrder)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectoryAdapter.FolderHolder {
@@ -54,16 +55,15 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
         super.onBindViewHolder(viewHolder, position)
         val item = files[position]
 
-        imageCreator.showThumbnail( (item as FolderModel).images[0], viewHolder.imageView.context, viewHolder.imageView, size)
+        //imageCreator.showThumbnail( (item as FolderModel).images[0], viewHolder.imageView.context, viewHolder.imageView, size)
 
-//        CoroutineScope(Dispatchers.Main).launch {
-//            imageCreator.showFolderThumbnail(item.file, viewHolder.imageView.context, viewHolder.imageView, size)
-//        }
+        CoroutineScope(Dispatchers.Main).launch {
+            imageCreator.showFolderThumbnail( (item as FolderModel).images, viewHolder.imageView.context, viewHolder.imageView, size)
+        }
     }
 
     override fun prepareActionMode(menu: Menu) {
         val isOneItemSelected = isOneItemSelected
-
     }
 
     override fun actionItemPressed(id: Int) {
@@ -77,6 +77,12 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
             R.id.copyTo -> copyTo()
             R.id.delete -> delete()
         }
+    }
+
+    override fun sort(sortingType: SortingType, order: Order) {
+        super.sort(sortingType, order)
+        directorySortingType = sortingType
+        directorySortingOrder = order
     }
 
     private fun rename(){

@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.example.unipicdev.R
+import com.example.unipicdev.mediaSortingOrder
+import com.example.unipicdev.mediaSortingType
 import com.example.unipicdev.models.DataSaver
 import com.example.unipicdev.models.ThumbnailModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
@@ -22,6 +24,10 @@ class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMode
 
     override val actionMenuId: Int
         get() = R.menu.menu_media_work
+
+    init{
+        sort(mediaSortingType, mediaSortingOrder)
+    }
 
     class ImageHolder(view: View) : ThumbnailHolder(view)
 
@@ -57,13 +63,16 @@ class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMode
         }
     }
 
-    override fun sort(sortingType: SortingType, reverse: Boolean) {
+    override fun sort(sortingType: SortingType, order: Order) {
         if (sortingType == SortingType.CUSTOM){
-            val custom = dataSaver.getImagePositions(directory)
+            val custom = dataSaver.getCustomMediaList(directory)
             reorderItems(custom)
             super.sortingType = SortingType.CUSTOM
         }
-        else super.sort(sortingType, reverse)
+        else super.sort(sortingType, order)
+
+        mediaSortingType = sortingType
+        mediaSortingOrder = order
     }
 
     override fun swapItems(fromPosition: Int, toPosition: Int){
@@ -72,6 +81,25 @@ class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMode
     }
 
     private fun rename(){
+        fun onRename(position: Int, file: File){
+            val item = selectedItems[position]
+            val newItem = item
+            newItem.file = file
+            changeItem(item, newItem)
+            sort(sortingType)
+        }
+
+        fun onComplete(newFiles: MutableList<File>) {
+            for (position in 0 until newFiles.size) {
+                val item = selectedItems[position]
+                val newItem = item
+                newItem.file = newFiles[position]
+                changeItem(item, newItem)
+            }
+            if(sortingType == SortingType.NAME)
+                sort(sortingType)
+        }
+
         val dialog = MediaRenamingDialog(selectedItems.map{it.file}, ::onRename, ::onComplete)
         createDialog(dialog)
     }
@@ -88,16 +116,7 @@ class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMode
     }
 
     private fun editDate(){
-        if(isOneItemSelected){
-
-        }
-        else{
-
-        }
-
-        val dialog = DateEditingDialog{
-
-        }
+        val dialog = DateEditingDialog(selectedItems)
         createDialog(dialog)
     }
 
@@ -109,28 +128,9 @@ class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMode
 
     }
 
-
     private fun createDialog(dialog: DialogFragment){
         val manager = activity.supportFragmentManager
         dialog.show(manager, "RenamingDialog")
     }
 
-    private fun onComplete(newFiles: MutableList<File>) {
-        for (position in 0 until newFiles.size) {
-            val item = selectedItems[position]
-            val newItem = item
-            newItem.file = newFiles[position]
-            changeItem(item, newItem)
-        }
-        if(sortingType == SortingType.NAME)
-            sort(sortingType)
-    }
-
-    fun onRename(position: Int, file: File){
-        val item = selectedItems[position]
-        val newItem = item
-        newItem.file = file
-        changeItem(item, newItem)
-        sort(sortingType)
-    }
 }

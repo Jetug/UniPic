@@ -16,6 +16,7 @@ import com.example.unipicdev.models.ThumbnailModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.MediaAdapter
 import com.example.unipicdev.views.adapters.SortingType
+import com.example.unipicdev.views.dialogs.SortingDialog
 import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.android.synthetic.main.activity_image_gallery.*
 import java.io.File
@@ -45,6 +46,8 @@ class MediaGalleryActivity : AppCompatActivity(){
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
+            R.id.sorting -> sort()
+            R.id.checkMode -> enableSelectionMode()
             R.id.byName -> imageAdapter.sort(SortingType.NAME)
             R.id.byCreationDate -> imageAdapter.sort(SortingType.CREATION_DATE)
             R.id.byModificationDate -> imageAdapter.sort(SortingType.MODIFICATION_DATE)
@@ -68,6 +71,18 @@ class MediaGalleryActivity : AppCompatActivity(){
         return true
     }
 
+    private fun sort(){
+        val dialog = SortingDialog(false){
+                sorting, order ->
+            imageAdapter.sort(sorting, order)
+        }
+        dialog.show(supportFragmentManager, "SortingDialog")
+    }
+
+    private fun enableSelectionMode(){
+        imageAdapter.selectionMode = !imageAdapter.selectionMode
+    }
+
     private fun onChecked(buttonView: CompoundButton, isChecked: Boolean){
         imageAdapter.isDragEnabled = isChecked
     }
@@ -88,10 +103,6 @@ class MediaGalleryActivity : AppCompatActivity(){
         {
             imagesList.add(ThumbnailModel(file))
         }
-
-
-
-        val arrayList = ArrayList(imagesList)
 
         val size: DisplayMetrics = getDisplaySize(this)
         val width = size.widthPixels / colCount

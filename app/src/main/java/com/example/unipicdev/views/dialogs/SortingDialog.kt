@@ -4,24 +4,50 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.EditText
+import android.view.View
 import android.widget.RadioGroup
 import androidx.fragment.app.DialogFragment
-import com.example.unipicdev.R
-import com.example.unipicdev.models.renameFile
+import com.example.unipicdev.*
 import com.example.unipicdev.views.adapters.Order
 import com.example.unipicdev.views.adapters.SortingType
 
-class SortingDialog(val onComplete: (sorting: SortingType, order: Order) -> Unit)  : DialogFragment()  {
+class SortingDialog(val isDirSorting: Boolean, val onComplete: (sorting: SortingType, order: Order) -> Unit)  : DialogFragment()  {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val inflater = requireActivity().layoutInflater
+        val view: View = inflater.inflate(R.layout.dialog_sorting, null)
         val alertDialogBuilder = AlertDialog.Builder(activity)
+
+
+
+        setupDialog(view)
+
+
         return alertDialogBuilder
             .setTitle("Сортировать по")
-            .setView(R.layout.dialog_sorting)
+            .setView(view)
             .setPositiveButton("Ок", ::onPositiveButtonClick)
             .setNegativeButton("Отмена", null)
             .create()
+    }
+
+    private fun setupDialog(view: View){
+        var sortingType = if (isDirSorting) directorySortingType else mediaSortingType
+        var sortingOrder = if (isDirSorting) directorySortingOrder else mediaSortingOrder
+
+        val sortingRG = view.findViewById<RadioGroup>(R.id.sortingBy)
+        val orderRG =  view.findViewById<RadioGroup>(R.id.sortingOrder)
+
+        when (sortingType){
+            SortingType.NAME -> sortingRG.check(R.id.byName)
+            SortingType.CREATION_DATE -> sortingRG.check(R.id.byCreationDate)
+            SortingType.MODIFICATION_DATE -> sortingRG.check(R.id.byModificationDate)
+            SortingType.CUSTOM -> sortingRG.check(R.id.custom)
+        }
+
+        when(sortingOrder){
+            Order.ASCENDING -> orderRG.check(R.id.ascending)
+            Order.DESCENDING -> orderRG.check(R.id.descending)
+        }
     }
 
     private fun onPositiveButtonClick(dialog: DialogInterface, id: Int){
