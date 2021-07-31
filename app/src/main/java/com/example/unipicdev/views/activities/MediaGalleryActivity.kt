@@ -10,15 +10,19 @@ import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.models.MediaSearcher
 import com.example.unipicdev.models.ThumbnailModel
+import com.example.unipicdev.models.room.saveDirSorting
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.MediaAdapter
-import com.example.unipicdev.views.adapters.SortingType
 import com.example.unipicdev.views.dialogs.SortingDialog
 import com.google.android.material.switchmaterial.SwitchMaterial
-import kotlinx.android.synthetic.main.activity_image_gallery.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+//import kotlinx.android.synthetic.main.activity_image_gallery.*
 import java.io.File
 
 class MediaGalleryActivity : AppCompatActivity(){
@@ -26,7 +30,9 @@ class MediaGalleryActivity : AppCompatActivity(){
     private val mediaSearcher = MediaSearcher()
     private val colCount = 3
     private val imageGalleryActivity = this
+
     private lateinit var imageAdapter: MediaAdapter
+    private lateinit var dirPath: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +53,11 @@ class MediaGalleryActivity : AppCompatActivity(){
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.sorting -> sort()
-            R.id.checkMode -> enableSelectionMode()
-            R.id.byName -> imageAdapter.sort(SortingType.NAME)
-            R.id.byCreationDate -> imageAdapter.sort(SortingType.CREATION_DATE)
-            R.id.byModificationDate -> imageAdapter.sort(SortingType.MODIFICATION_DATE)
-            R.id.custom -> imageAdapter.sort(SortingType.CUSTOM)
+//            R.id.checkMode -> enableSelectionMode()
+//            R.id.byName -> imageAdapter.sort(SortingType.NAME)
+//            R.id.byCreationDate -> imageAdapter.sort(SortingType.CREATION_DATE)
+//            R.id.byModificationDate -> imageAdapter.sort(SortingType.MODIFICATION_DATE)
+//            R.id.custom -> imageAdapter.sort(SortingType.CUSTOM)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -75,6 +81,10 @@ class MediaGalleryActivity : AppCompatActivity(){
         val dialog = SortingDialog(false){
                 sorting, order ->
             imageAdapter.sort(sorting, order)
+
+            CoroutineScope(Dispatchers.Default).launch{
+                saveDirSorting(dirPath, sorting, order)
+            }
         }
         dialog.show(supportFragmentManager, "SortingDialog")
     }
@@ -90,11 +100,13 @@ class MediaGalleryActivity : AppCompatActivity(){
     private fun initImageRV(){
         val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+
+        val imagesDRV = findViewById<RecyclerView>(R.id.imagesDRV)
         imagesDRV.layoutManager = linearLayoutManager
         imagesDRV.setHasFixedSize(true)
         //imagesDRV.orientation = DragDropSwipeRecyclerView.ListOrientation.HORIZONTAL_LIST_WITH_UNCONSTRAINED_DRAGGING
 
-        val dirPath = intent.getCharSequenceExtra("dirPath")as String
+        dirPath = intent.getCharSequenceExtra("dirPath")as String
         val imageFiles = mediaSearcher.getImageFiles(dirPath)
         val imagesList = mutableListOf<ThumbnailModel>()
         val buffList = mutableListOf<File>()

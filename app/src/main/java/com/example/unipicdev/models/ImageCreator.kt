@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.unipicdev.models.room.getDirSorting
 import com.example.unipicdev.views.adapters.Order
 import com.example.unipicdev.views.adapters.SortingType
 import java.io.File
@@ -43,16 +44,15 @@ class ImageCreator {
         glide.into(imageView)
     }
 
-    fun showFolderThumbnail(files: Array<File>, context: Context, imageView: ImageView, size: Int) {
+    suspend fun showFolderThumbnail(files: Array<File>, context: Context, imageView: ImageView, size: Int) {
         if(files.isNotEmpty()) {
             val dirPath: String = files[0].parent
-            val sorting: SortingType = getDirSorting(dirPath)
+            val pair = getDirSorting(dirPath)
+            val sorting: SortingType = pair.first
+            val order: Order = if(pair.second == Order.NONE) Order.DESCENDING else pair.second
             var media = files
 
-            fun reverse()
-            {
-                media.reverse()
-            }
+            fun reverse(){if(order == Order.DESCENDING) media.reverse()}
 
             when(sorting){
                 SortingType.NONE ->{
@@ -61,6 +61,7 @@ class ImageCreator {
                 }
                 SortingType.NAME -> {
                     media.sortBy { it.name }
+                    reverse()
                 }
                 SortingType.CREATION_DATE -> {
                     media.sortBy {
@@ -68,9 +69,11 @@ class ImageCreator {
                         val attr = Files.readAttributes(path, BasicFileAttributes::class.java)
                         return@sortBy attr.creationTime()
                     }
+                    reverse()
                 }
                 SortingType.MODIFICATION_DATE -> {
                     files.sortBy{ it.lastModified() }
+                    reverse()
                 }
                 SortingType.CUSTOM -> {
                     media = dataSaver.getCustomMediaListF(dirPath).toTypedArray()

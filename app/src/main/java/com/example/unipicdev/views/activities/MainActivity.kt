@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.appContext
 import com.example.unipicdev.models.DirectorySearcher
@@ -29,7 +30,7 @@ import com.example.unipicdev.views.adapters.DirectoryAdapter
 import com.example.unipicdev.views.adapters.SortingType
 import com.example.unipicdev.views.dialogs.SortingDialog
 import com.google.android.material.switchmaterial.SwitchMaterial
-import kotlinx.android.synthetic.main.activity_main.*
+//import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -133,6 +134,8 @@ class MainActivity : AppCompatActivity() {
     private fun initFolderRV(){
         val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+
+        val dndRV = findViewById<RecyclerView>(R.id.dndRV)
         dndRV.layoutManager = linearLayoutManager
         dndRV.setHasFixedSize(true)
 

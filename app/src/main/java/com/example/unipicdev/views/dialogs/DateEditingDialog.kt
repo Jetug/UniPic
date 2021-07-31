@@ -62,7 +62,14 @@ class DateEditingDialog(val selectedItems: MutableList<ThumbnailModel>, val onCo
 
     private fun onPositiveButtonClick(dialog: DialogInterface, id: Int){
         val f = dialog as Dialog
-        val initDate = DateTime(datePicker.year,datePicker.month,datePicker.dayOfMonth,timePicker.hour,timePicker.minute,secondsNP.value)
+        val year = datePicker.year
+        val month = datePicker.month + 1
+        val day = datePicker.dayOfMonth
+        val hour = timePicker.hour
+        val minute = timePicker.minute
+        val second = secondsNP.value
+
+        val initDate = DateTime(year, month, day, hour, minute, second)
         val step = Period.years(0).withMonths(0).withDays(0).withHours(0).withMinutes(1).withSeconds(0)
 
         var buffDate = initDate
