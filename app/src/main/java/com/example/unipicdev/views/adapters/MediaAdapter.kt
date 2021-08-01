@@ -6,12 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-import com.example.unipicdev.R
-import com.example.unipicdev.mediaSortingOrder
-import com.example.unipicdev.mediaSortingType
+import com.example.unipicdev.*
 import com.example.unipicdev.models.DataSaver
 import com.example.unipicdev.models.ThumbnailModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
+import com.example.unipicdev.models.room.getMediaSorting
 import com.example.unipicdev.views.dialogs.DateEditingDialog
 import com.example.unipicdev.views.dialogs.*
 import java.io.File
@@ -26,7 +25,10 @@ class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMode
         get() = R.menu.menu_media_work
 
     init{
-        sort(mediaSortingType, mediaSortingOrder)
+        val pair = getMediaSorting(directory)
+        val sorting: SortingType = getNotNoneSortingType(pair.first)
+        val order: Order = getNotNoneSortingOrder(pair.second)
+        sort(sorting, order)
     }
 
     class ImageHolder(view: View) : ThumbnailHolder(view)

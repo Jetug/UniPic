@@ -7,7 +7,7 @@ import com.example.unipicdev.models.room.*
 @Dao
 interface SortingDao {
     @Query(selectALLQuery)
-    suspend fun getAll(): List<Sorting>
+    fun getAll(): List<Sorting>
 
     @Query(selectALLQuery)
     suspend fun getById(): List<Sorting>

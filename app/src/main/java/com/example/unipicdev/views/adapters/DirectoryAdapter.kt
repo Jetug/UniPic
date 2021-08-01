@@ -57,7 +57,7 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
 
         //imageCreator.showThumbnail( (item as FolderModel).images[0], viewHolder.imageView.context, viewHolder.imageView, size)
 
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             imageCreator.showFolderThumbnail( (item as FolderModel).images, viewHolder.imageView.context, viewHolder.imageView, size)
         }
     }

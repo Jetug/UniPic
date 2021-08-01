@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.models.MediaSearcher
 import com.example.unipicdev.models.ThumbnailModel
-import com.example.unipicdev.models.room.saveDirSorting
+import com.example.unipicdev.models.room.saveMediaSorting
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.MediaAdapter
 import com.example.unipicdev.views.dialogs.SortingDialog
@@ -83,7 +83,7 @@ class MediaGalleryActivity : AppCompatActivity(){
             imageAdapter.sort(sorting, order)
 
             CoroutineScope(Dispatchers.Default).launch{
-                saveDirSorting(dirPath, sorting, order)
+                saveMediaSorting(dirPath, sorting, order)
             }
         }
         dialog.show(supportFragmentManager, "SortingDialog")
