@@ -7,8 +7,10 @@ import android.view.MenuItem
 import android.widget.ImageSwitcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.example.unipicdev.R
 import com.example.unipicdev.views.adapters.ImageViewerAdapter
+import com.example.unipicdev.views.adapters.ViewPagerAdapter
 import com.veinhorn.scrollgalleryview.ScrollGalleryView
 import github.hellocsl.layoutmanager.gallery.GalleryLayoutManager
 //import kotlinx.android.synthetic.main.activity_image.*
@@ -22,9 +24,6 @@ class MediaViewerActivity : AppCompatActivity()/*, ViewSwitcher.ViewFactory*/{
     private val currentMedia: File
         get() = images[position]
 
-    private lateinit var mImageSwitcher: ImageSwitcher
-    private lateinit var mGestureDetector: GestureDetector
-    private lateinit var galleryView: ScrollGalleryView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,14 +35,17 @@ class MediaViewerActivity : AppCompatActivity()/*, ViewSwitcher.ViewFactory*/{
         val images = intent.getSerializableExtra("imageList") as ArrayList<File>
         val position = intent.getIntExtra("position",0)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        val layoutManager = GalleryLayoutManager(GalleryLayoutManager.HORIZONTAL)
-        layoutManager.attach(recyclerView, position)
+//        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+//        val layoutManager = GalleryLayoutManager(GalleryLayoutManager.HORIZONTAL)
+//        layoutManager.attach(recyclerView, position)
+//        recyclerView.adapter = ImageViewerAdapter(this, images)
+//
+//        supportActionBar?.title = ""
 
-        val adapter = ImageViewerAdapter(this, images)
-        recyclerView.adapter = adapter
-
-        supportActionBar?.title = ""
+        var viewPager: ViewPager? = null
+        viewPager = findViewById(R.id.pager)
+        viewPager.adapter = ViewPagerAdapter(viewPager, images)
+        viewPager.currentItem = position;
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -52,24 +54,24 @@ class MediaViewerActivity : AppCompatActivity()/*, ViewSwitcher.ViewFactory*/{
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.home -> {
-                onHome()
-                return true
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun onHome(){
-        val backStackEntryCount = supportFragmentManager.backStackEntryCount
-        if (backStackEntryCount > 0) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        } else {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-        }
-        onBackPressed()
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when(item.itemId){
+//            R.id.home -> {
+//                onHome()
+//                return true
+//            }
+//        }
+//
+//        return super.onOptionsItemSelected(item)
+//    }
+//
+//    private fun onHome(){
+//        val backStackEntryCount = supportFragmentManager.backStackEntryCount
+//        if (backStackEntryCount > 0) {
+//            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+//        } else {
+//            supportActionBar!!.setDisplayHomeAsUpEnabled(false)
+//        }
+//        onBackPressed()
+//    }
 }
