@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private val colCount = 2
     private val mainActivity = this
     private lateinit var folderAdapter: DirectoryAdapter
-    private val directorySearcher = DirectorySearcher()
+    private lateinit var directorySearcher: DirectorySearcher
 
     companion object {
         const val REQUEST_PERMISSION = 1
@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         appContext = applicationContext;
+        directorySearcher = DirectorySearcher(appContext)
 
         val r = Environment.getExternalStorageDirectory().getAbsolutePath()
         val b = isStoragePermissionGranted()

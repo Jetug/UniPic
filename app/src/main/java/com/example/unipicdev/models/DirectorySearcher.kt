@@ -1,5 +1,11 @@
 package com.example.unipicdev.models
 
+import android.content.Context
+import android.os.Environment
+import android.os.storage.StorageManager
+import android.os.storage.StorageVolume
+import androidx.core.content.ContextCompat.getObbDirs
+import com.example.unipicdev.appContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,23 +27,61 @@ fun isHidden(dir: File):Boolean {
 
 fun startsWithDoc(path: String): Boolean = path[0] == '.'
 
-class DirectorySearcher {
+class DirectorySearcher(val context: Context) {
     private val dataSaver = DataSaver()
 
-    private val initPath = "/storage/emulated/0/"
+    private val initPath = Environment.getExternalStorageDirectory().absolutePath// "/storage/emulated/0/"
     private val sdPath = "/storage/7A5A-1CF6/"
+
+    private var dirList = mutableListOf<File>()
+
     private var savedDirectories: ArrayList<File> = ArrayList()
     private var searchJob: Job? = null
 
     init {
         //this.showHidden = showHidden
+        val dirs = appContext.getExternalFilesDirs(null)
+        val dirs2 = appContext.obbDirs
+        val file = File("/storage/")
+        val ch = file.listFiles()
+
+        initDirList()
+        val u = 6
     }
+
+    fun initDirList(){
+        val dirs = appContext.getExternalFilesDirs(null)
+        dirs.forEach {
+            dirList.add(getParentFile(it, 4))
+        }
+    }
+
+    fun getSDCard(){
+        val dirs = appContext.getExternalFilesDirs(null)
+        val sdDirPath = dirs[1]
+    }
+
+    fun getParentFile(file: File, downTo: Int): File {
+        var parent: File = file
+        for (i in 1..downTo){
+            if(parent.parentFile != null){
+                parent = parent.parentFile
+            }
+        }
+        return parent
+    }
+
 
     fun getDirectories(onFind: (file: FolderModel) -> Unit ){
         searchJob = CoroutineScope(Dispatchers.Default).launch{
             showSavedDirs(onFind)
-            searchDirectories(File(initPath), onFind)
-            searchDirectories(File(sdPath), onFind)
+
+            dirList.forEach{
+                searchDirectories(it, onFind)
+            }
+
+//            searchDirectories(File(initPath), onFind)
+//            searchDirectories(File(sdPath), onFind)
         }
     }
 
