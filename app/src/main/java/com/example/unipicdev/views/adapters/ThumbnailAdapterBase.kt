@@ -9,12 +9,15 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.SortingType.*
+import com.example.unipicdev.views.dialogs.DateEditingDialog
+import com.example.unipicdev.views.dialogs.DeletingDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -134,10 +137,9 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
     }
 
-
-
     override fun onBindViewHolder(viewHolder: HolderType, position: Int) {
         val item = files[position]
+        viewHolder.itemView.setTag(R.id.tag_item, position)
 
         fun select(){
             if ( viewHolder.checkCircle.visibility == View.INVISIBLE){
@@ -169,7 +171,13 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
                     startActionMode()
                 select()
             }
-            else onClickListener.onClick(item.file.absolutePath)
+            else {
+                var pos: Int = 0
+                if(it.getTag(R.id.tag_item) != null) {
+                    pos = it.getTag(R.id.tag_item) as Int
+                }
+                onClickListener.onClick(item.file.absolutePath, pos)
+            }
         }
 
         viewHolder.imageView.setOnLongClickListener {
@@ -188,6 +196,10 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         viewHolder.nameTV.text = item.file.name
         if(files[position].isChecked)
             viewHolder.checkCircle.visibility = View.VISIBLE
+    }
+
+    private fun onItemClick(view: View) {
+
     }
 
     override fun getItemCount(): Int {
@@ -343,10 +355,18 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     }
 
     protected fun delete(){
-        selectedItems.forEach{
-            deleteFile(it.file)
-            removeItem(it)
+        val dialog = DeletingDialog{
+            selectedItems.forEach{
+                deleteFile(it.file)
+                removeItem(it)
+            }
         }
+        createDialog(dialog)
+    }
+
+    protected fun createDialog(dialog: DialogFragment){
+        val manager = activity.supportFragmentManager
+        dialog.show(manager, "RenamingDialog")
     }
 
     private fun startActionMode(){

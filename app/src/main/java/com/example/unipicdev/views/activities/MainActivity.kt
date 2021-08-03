@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.KeyEvent
@@ -34,6 +35,9 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.net.toFile
+
 
 class MainActivity : AppCompatActivity() {
     private val colCount = 2
@@ -45,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         const val REQUEST_PERMISSION = 1
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -67,8 +72,6 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             initFolderRV()
         }
-
-
 //        val abTitleId = resources.getIdentifier("action_bar_title", "id", "android")
 //        findViewById<View>(abTitleId).setOnClickListener {
 //            //Toast.makeText(this, "Toasty", Toast.LENGTH_SHORT).show()
@@ -144,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         val width = size.widthPixels / colCount
 
         val adapter = DirectoryAdapter(this, ArrayList(), width, object : ItemOnClickListener {
-            override fun onClick(path: String) = folderItemOnClick(path)
+            override fun onClick(path: String, pos: Int) = folderItemOnClick(path, pos)
         })
         dndRV.adapter = adapter
         folderAdapter = adapter
@@ -159,7 +162,7 @@ class MainActivity : AppCompatActivity() {
         directorySearcher.getDirectories(::addFolderItem)
     }
 
-    private fun folderItemOnClick(path: String){
+    private fun folderItemOnClick(path: String, pos:Int){
         val intent = Intent(mainActivity, MediaGalleryActivity::class.java)
         intent.putExtra("dirPath", path)
         startActivity(intent)

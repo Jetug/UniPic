@@ -31,10 +31,14 @@ class MediaViewerActivity : AppCompatActivity()/*, ViewSwitcher.ViewFactory*/{
         initRecyclerView()
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
+    }
+
     private fun initRecyclerView(){
         val images = intent.getSerializableExtra("imageList") as ArrayList<File>
         val position = intent.getIntExtra("position",0)
-
 //        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
 //        val layoutManager = GalleryLayoutManager(GalleryLayoutManager.HORIZONTAL)
 //        layoutManager.attach(recyclerView, position)

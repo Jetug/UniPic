@@ -15,7 +15,7 @@ import com.example.unipicdev.models.changeFileDate
 import org.joda.time.*
 
 
-class DateEditingDialog(val selectedItems: MutableList<ThumbnailModel>, val onComplete: (DateTime, Period) -> Unit = { _, _ ->}): DialogFragment(){
+class DateEditingDialog(private val selectedItems: MutableList<ThumbnailModel>, val onComplete: (DateTime, Period) -> Unit = { _, _ ->}): DialogFragment(){
 
     private lateinit var datePicker: DatePicker
     private lateinit var timePicker: TimePicker

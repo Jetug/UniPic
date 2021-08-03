@@ -4,8 +4,10 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.*
 import com.example.unipicdev.models.DataSaver
 import com.example.unipicdev.models.ThumbnailModel
@@ -16,8 +18,13 @@ import com.example.unipicdev.views.dialogs.*
 import java.io.File
 
 
-class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailModel>, private var size: Int, private val directory: String, onClickListener: ItemOnClickListener)
-    : ThumbnailAdapterBase<MediaAdapter.ImageHolder>(activity, files, size, onClickListener)
+class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailModel>,
+                   private var size: Int,
+                   private val directory: String,
+                   onClickListener: ItemOnClickListener,
+                   private val listener: OnPaintingClickListener
+)
+    : ThumbnailAdapterBase<MediaAdapter.MediaHolder>(activity, medias, size, onClickListener)
 {
     private val dataSaver = DataSaver()
 
@@ -31,16 +38,24 @@ class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMode
         sort(sorting, order)
     }
 
-    class ImageHolder(view: View) : ThumbnailHolder(view)
+    class MediaHolder(view: View) : ThumbnailHolder(view)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_folder, parent, false)
-        return ImageHolder(itemView)
+
+        val holder =  MediaHolder(itemView)
+        holder.imageView.setOnClickListener(this::onItemClick);
+        return holder;
+        //return MediaHolder(itemView)
     }
 
-    override fun onBindViewHolder(viewHolder: ImageHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: MediaHolder, position: Int) {
         super.onBindViewHolder(viewHolder, position)
+
+        // Storing item position for click handler
+        viewHolder.itemView.setTag(R.id.tag_item, position)
+
         val item = files[position]
 //        var longVal = item.file.lastModified()
 //        var date = Date(longVal)
@@ -106,8 +121,6 @@ class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMode
         createDialog(dialog)
     }
 
-
-
     private fun options(){
         if(isOneItemSelected){
 
@@ -130,9 +143,18 @@ class MediaAdapter(activity: AppCompatActivity, files: MutableList<ThumbnailMode
 
     }
 
-    private fun createDialog(dialog: DialogFragment){
-        val manager = activity.supportFragmentManager
-        dialog.show(manager, "RenamingDialog")
+    companion object {
+        fun getImageView(holder: RecyclerView.ViewHolder): ImageView {
+            return (holder as MediaHolder).imageView
+        }
     }
 
+    private fun onItemClick(view: View) {
+        val pos = view.getTag(R.id.tag_item) as Int
+        listener.onPaintingClick(pos)
+    }
+}
+
+interface OnPaintingClickListener {
+    fun onPaintingClick(position: Int)
 }

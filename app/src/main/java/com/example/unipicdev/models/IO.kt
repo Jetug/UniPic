@@ -34,8 +34,6 @@ fun renameFile(file: File, newName: String, args: String): File{
         }
     }
     file.renameTo(newUnicFile)
-    //newFileNames.add(newUnicFile.nameWithoutExtension)
-
     return newUnicFile
 }
 

@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.Period
 
-class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderModel>, private val size: Int, private var onClickListener: ItemOnClickListener)
+class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderModel>, private val size: Int, onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, mutableListOf(), size, onClickListener)
 {
     class FolderHolder(view: View): ThumbnailHolder(view)

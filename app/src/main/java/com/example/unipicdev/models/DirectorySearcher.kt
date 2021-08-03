@@ -39,38 +39,8 @@ class DirectorySearcher(val context: Context) {
     private var searchJob: Job? = null
 
     init {
-        //this.showHidden = showHidden
-        val dirs = appContext.getExternalFilesDirs(null)
-        val dirs2 = appContext.obbDirs
-        val file = File("/storage/")
-        val ch = file.listFiles()
-
         initDirList()
-        val u = 6
     }
-
-    fun initDirList(){
-        val dirs = appContext.getExternalFilesDirs(null)
-        dirs.forEach {
-            dirList.add(getParentFile(it, 4))
-        }
-    }
-
-    fun getSDCard(){
-        val dirs = appContext.getExternalFilesDirs(null)
-        val sdDirPath = dirs[1]
-    }
-
-    fun getParentFile(file: File, downTo: Int): File {
-        var parent: File = file
-        for (i in 1..downTo){
-            if(parent.parentFile != null){
-                parent = parent.parentFile
-            }
-        }
-        return parent
-    }
-
 
     fun getDirectories(onFind: (file: FolderModel) -> Unit ){
         searchJob = CoroutineScope(Dispatchers.Default).launch{
@@ -79,9 +49,6 @@ class DirectorySearcher(val context: Context) {
             dirList.forEach{
                 searchDirectories(it, onFind)
             }
-
-//            searchDirectories(File(initPath), onFind)
-//            searchDirectories(File(sdPath), onFind)
         }
     }
 
@@ -97,10 +64,6 @@ class DirectorySearcher(val context: Context) {
         searchJob?.cancel()
     }
 
-    fun getNotHiddenDirectories(){
-
-    }
-
     private fun searchDirectories(directory: File, onFind: (file: FolderModel) -> Unit){
         val directories:Array<File>? = directory.listFiles()
         if (directories != null) {
@@ -114,6 +77,23 @@ class DirectorySearcher(val context: Context) {
                 }
             }
         }
+    }
+
+    private fun initDirList(){
+        val dirs = appContext.getExternalFilesDirs(null)
+        dirs.forEach {
+            dirList.add(getParentFile(it, 4))
+        }
+    }
+
+    private fun getParentFile(file: File, downTo: Int): File {
+        var parent: File = file
+        for (i in 1..downTo){
+            if(parent.parentFile != null){
+                parent = parent.parentFile
+            }
+        }
+        return parent
     }
 
     private fun isMediaDirectory(folder: File): Boolean{

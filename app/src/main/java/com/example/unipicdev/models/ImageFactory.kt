@@ -64,7 +64,7 @@ class ImageFactory {
         }
     }
 
-    suspend fun showFolderThumbnail(files: Array<File>, context: Context, imageView: ImageView, size: Int) {
+    fun showFolderThumbnail(files: Array<File>, context: Context, imageView: ImageView, size: Int) {
         if(files.isNotEmpty()) {
             val time = measureTimeMillis {
                 val dirPath: String = files[0].parent
@@ -120,8 +120,7 @@ class ImageFactory {
             SortingType.CREATION_DATE -> {
                 media.sortBy {
                     val path = FileSystems.getDefault().getPath(it.absolutePath)
-                    val attr =
-                        Files.readAttributes(path, BasicFileAttributes::class.java)
+                    val attr = Files.readAttributes(path, BasicFileAttributes::class.java)
                     return@sortBy attr.creationTime()
                 }
                 reverse()
