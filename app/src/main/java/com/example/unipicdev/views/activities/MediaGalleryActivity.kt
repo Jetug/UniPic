@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 //import kotlinx.android.synthetic.main.activity_image_gallery.*
 import java.io.File
 
-class MediaGalleryActivity : AppCompatActivity(){
+class MediaGalleryActivity : BaseActivity(){
 
     private val mediaSearcher = MediaSearcher()
     private val colCount = 3

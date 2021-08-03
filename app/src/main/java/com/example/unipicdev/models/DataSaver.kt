@@ -1,15 +1,15 @@
 package com.example.unipicdev.models
 
-import android.content.Context
-import com.example.unipicdev.appContext
 import java.io.File
 
 class DataSaver() {
 
     private val programDirPath = "/storage/emulated/0/UniPic/"
-    private val saveFilePath = "/storage/emulated/0/UniPic/Dirs.txt"
-    private val programDir = createProgramDir()
-    private lateinit var saveFile: File
+    private val saveFilePath = "Dirs.txt"
+    private val programDir : File
+    get() = createProgramDir()
+    private val saveFile: File
+    get() = createSaveFile()
 
 //    fun saveDir(path: ArrayList<File>){
 //        path.forEach{
@@ -62,7 +62,7 @@ class DataSaver() {
         return paths
     }
 
-    fun getNotHidenSavedDirs(): ArrayList<File>{
+    fun getNotHiddenSavedDirs(): ArrayList<File>{
         createSaveFile()
         val paths = ArrayList<File>()
         if(saveFile.exists()) {
@@ -133,7 +133,7 @@ class DataSaver() {
     }
 
 
-    fun normolinzeSaveFile(){
+    fun normalizeSaveFile(){
         var text = ""
         saveFile.bufferedReader().forEachLine {
             val file = File(it)
@@ -154,7 +154,7 @@ class DataSaver() {
         return false
     }
 
-    private fun writeToFile( path: String){
+    private fun writeToFile(path: String){
         var text = saveFile.bufferedReader().readText()
         text += path
         saveFile.printWriter().use {
@@ -163,18 +163,18 @@ class DataSaver() {
     }
 
     private fun createProgramDir(): File{
-        val saveFile = File(programDirPath)
-        if(!saveFile.exists()){
-            saveFile.mkdirs()
+        val programDir = File(programDirPath)
+        if(!programDir.exists()){
+            programDir.mkdirs()
         }
-        return saveFile
+        return programDir
     }
 
-    private fun createSaveFile(){
-        val saveFile = File(saveFilePath)
+    private fun createSaveFile(): File{
+        val saveFile = File(programDir, saveFilePath)
         if(!saveFile.exists()){
             saveFile.createNewFile()
         }
-        this.saveFile = saveFile
+        return saveFile
     }
 }

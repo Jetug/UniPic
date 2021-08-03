@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.unipicdev"
-        minSdkVersion 26
+        minSdkVersion 22
         //noinspection OldTargetApi
         targetSdkVersion 29
         versionCode 1

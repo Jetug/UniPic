@@ -82,7 +82,8 @@ class DirectorySearcher(val context: Context) {
     private fun initDirList(){
         val dirs = appContext.getExternalFilesDirs(null)
         dirs.forEach {
-            dirList.add(getParentFile(it, 4))
+            val parent = getParentFile(it, 4)
+            dirList.add(parent)
         }
     }
 

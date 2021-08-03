@@ -37,17 +37,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.net.toFile
+import com.example.unipicdev.models.isStoragePermissionGranted
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     private val colCount = 2
     private val mainActivity = this
     private lateinit var folderAdapter: DirectoryAdapter
     private lateinit var directorySearcher: DirectorySearcher
-
-    companion object {
-        const val REQUEST_PERMISSION = 1
-    }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,30 +52,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         appContext = applicationContext;
+        isStoragePermissionGranted(this)
         directorySearcher = DirectorySearcher(appContext)
-
-        val r = Environment.getExternalStorageDirectory().getAbsolutePath()
-        val b = isStoragePermissionGranted()
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSION)
-        }
-
-        var strSDCardPath = System.getenv("SECONDARY_STORAGE")
-        if (null == strSDCardPath || strSDCardPath.isEmpty()) {
-            strSDCardPath = System.getenv("EXTERNAL_SDCARD_STORAGE")
-        }
 
         CoroutineScope(Dispatchers.Main).launch {
             initFolderRV()
         }
-//        val abTitleId = resources.getIdentifier("action_bar_title", "id", "android")
-//        findViewById<View>(abTitleId).setOnClickListener {
-//            //Toast.makeText(this, "Toasty", Toast.LENGTH_SHORT).show()
+
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSION)
 //        }
-
-
-
+//        var strSDCardPath = System.getenv("SECONDARY_STORAGE")
+//        if (null == strSDCardPath || strSDCardPath.isEmpty()) {
+//            strSDCardPath = System.getenv("EXTERNAL_SDCARD_STORAGE")
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -93,8 +80,6 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.sorting -> sort()
-
-
             R.id.byName -> folderAdapter.sort(SortingType.NAME)
             R.id.byCreationDate -> folderAdapter.sort(SortingType.CREATION_DATE)
             R.id.byModificationDate -> folderAdapter.sort(SortingType.MODIFICATION_DATE)
@@ -126,12 +111,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if(folderAdapter.selectionMode) {
-//                folderAdapter.cancelSelecting()
-//                return false
-//            }
-//        }
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+        }
         return super.onKeyDown(keyCode, event)
     }
 
@@ -166,29 +148,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(mainActivity, MediaGalleryActivity::class.java)
         intent.putExtra("dirPath", path)
         startActivity(intent)
-    }
-
-    @SuppressLint("ObsoleteSdkInt")
-    fun isStoragePermissionGranted(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.v(TAG, "Permission is granted")
-                true
-            } else {
-                Log.v(TAG, "Permission is revoked")
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    1
-                )
-                false
-            }
-        } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG, "Permission is granted")
-            true
-        }
     }
 
     private fun permissionGranted(): Boolean {

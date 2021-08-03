@@ -17,7 +17,7 @@ import github.hellocsl.layoutmanager.gallery.GalleryLayoutManager
 import java.io.File
 
 
-class MediaViewerActivity : AppCompatActivity()/*, ViewSwitcher.ViewFactory*/{
+class MediaViewerActivity : BaseActivity(){
 
     private var position = 0
     private var images = arrayListOf<File>()

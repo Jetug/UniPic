@@ -52,11 +52,11 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
 
     protected val selectedItem: ThumbnailModel
         get() = selectedItems[0];
-    protected val selectedItemsCount: Int
+    private val selectedItemsCount: Int
         get() = selectedItems.count()
     protected val isOneItemSelected: Boolean
         get() = selectedItemsCount == 1
-    protected val selectedCount
+    private val selectedCount
         get() = "${selectedItems.size}/${files.count()}"
 
     protected val selectedItems: MutableList<ThumbnailModel> = mutableListOf()
@@ -77,16 +77,15 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     var sortingType: SortingType = NAME
     var sortingOrder: Order = Order.ASCENDING
 
-
-    var selectionMode = false
-    get() = field
-    set(value) {
-        if (value)
-            startActionMode()
-//        else
-//            finishActionMode()
-        field = value
-    }
+    var selectionMode: Boolean = false
+        get() = field
+        set(value) {
+            if (value)
+                startActionMode()
+    //        else
+    //            finishActionMode()
+            field = value
+        }
 
     var isDragEnabled = false
 
@@ -94,8 +93,6 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     abstract fun actionItemPressed(id: Int)
 
     init {
-        //sort(sortingType)
-
         actionModeCallback = object: ActionMode.Callback {
             override fun onActionItemClicked(mode: android.view.ActionMode?, item: MenuItem?): Boolean {
                 if(item != null)
