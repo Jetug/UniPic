@@ -1,10 +1,6 @@
 package com.example.unipicdev.models
 
 import android.content.Context
-import android.os.Environment
-import android.os.storage.StorageManager
-import android.os.storage.StorageVolume
-import androidx.core.content.ContextCompat.getObbDirs
 import com.example.unipicdev.appContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +12,8 @@ import java.io.File
 // "/storage/7A5A-1CF6/"
 fun isHidden(dir: File):Boolean {
     val files = dir.listFiles()
+    if(startsWithDot(dir))
+        return true
     if (files != null) {
         for (file in files) {
             if (file.name == ".nomedia")
@@ -25,18 +23,15 @@ fun isHidden(dir: File):Boolean {
     return false
 }
 
-fun startsWithDoc(path: String): Boolean = path[0] == '.'
+fun startsWithDot(dirName: String): Boolean = dirName[0] == '.'
+fun startsWithDot(file: File): Boolean = startsWithDot(file.name)
 
 class DirectorySearcher(val context: Context) {
     private val dataSaver = DataSaver()
-
-    private val initPath = Environment.getExternalStorageDirectory().absolutePath// "/storage/emulated/0/"
-    private val sdPath = "/storage/7A5A-1CF6/"
-
     private var dirList = mutableListOf<File>()
-
     private var savedDirectories: ArrayList<File> = ArrayList()
     private var searchJob: Job? = null
+    private val notObservableDirs = arrayOf<String>(File("/storage/emulated/0/").absolutePath)
 
     init {
         initDirList()
@@ -52,6 +47,10 @@ class DirectorySearcher(val context: Context) {
         }
     }
 
+    fun stopSearching(){
+        searchJob?.cancel()
+    }
+
     private fun showSavedDirs(onFind: (file: FolderModel) -> Unit){
         savedDirectories = dataSaver.getSavedDirs()
         for(dir in savedDirectories){
@@ -60,16 +59,12 @@ class DirectorySearcher(val context: Context) {
         }
     }
 
-    fun stopSearching(){
-        searchJob?.cancel()
-    }
-
     private fun searchDirectories(directory: File, onFind: (file: FolderModel) -> Unit){
         val directories:Array<File>? = directory.listFiles()
         if (directories != null) {
             for (file in directories) {
                 if (file.isDirectory) {
-                    if (isMediaDirectory(file) && !savedDirectories.contains(file) && !startsWithDoc(file.name)) {
+                    if (isMediaDirectory(file) && !savedDirectories.contains(file) && isObservableDir(file) /*&& !startsWithDot(file.name)*/) {
                         onFind(FolderModel(file))
                         dataSaver.saveDir(file.absolutePath)
                     }
@@ -77,6 +72,10 @@ class DirectorySearcher(val context: Context) {
                 }
             }
         }
+    }
+
+    private fun isObservableDir(file: File): Boolean{
+        return (!notObservableDirs.contains(file.absolutePath))
     }
 
     private fun initDirList(){

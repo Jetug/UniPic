@@ -26,4 +26,5 @@
     <string name="descending">По убыванию</string>
     <string name="apply_to_all_folders">Применить ко всем папкам</string>
     <string name="sorting">Сортировка</string>
+    <string name="setup_custom_sorting">Настроить порядок элементов</string>
 </resources>

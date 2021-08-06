@@ -9,12 +9,14 @@ import com.example.unipicdev.*
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.models.isHidden
+import com.example.unipicdev.models.room.DatabaseApi
+import com.example.unipicdev.views.dialogs.MediaRenamingDialog
+import com.example.unipicdev.views.dialogs.PropertiesDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.Period
 
-class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderModel>, private val size: Int, onClickListener: ItemOnClickListener)
+class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderModel>, private val size: Int, onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, mutableListOf(), size, onClickListener)
 {
     class FolderHolder(view: View): ThumbnailHolder(view)
@@ -43,6 +45,14 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
 
     init{
         sort(directorySortingType, directorySortingOrder)
+        DatabaseApi.addOnMediaSortingSaved {
+            for (i in 0 until files.size) {
+                if(files[i].file.absolutePath == it){
+                    notifyItemChanged(i)
+                    break
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectoryAdapter.FolderHolder {
@@ -96,7 +106,8 @@ class DirectoryAdapter(activity: AppCompatActivity, files: MutableList<FolderMod
 
     private fun options(){
         if(isOneItemSelected){
-
+            val dialog = PropertiesDialog(selectedItem.file)
+            createDialog(dialog)
         }
         else{
 

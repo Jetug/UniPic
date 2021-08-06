@@ -8,11 +8,10 @@ import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.unipicdev.defaultMediaSortingOrder
-import com.example.unipicdev.defaultMediaSortingType
 import com.example.unipicdev.getNotNoneSortingOrder
 import com.example.unipicdev.getNotNoneSortingType
-import com.example.unipicdev.models.room.getMediaSorting
+import com.example.unipicdev.models.room.*
+import com.example.unipicdev.models.room.DatabaseApi.getMediaSorting
 import com.example.unipicdev.views.adapters.Order
 import com.example.unipicdev.views.adapters.SortingType
 import kotlinx.coroutines.CoroutineScope

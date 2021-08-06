@@ -2,10 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/positionCB"
-        android:title=""
-        app:actionViewClass="com.google.android.material.switchmaterial.SwitchMaterial"
-        app:showAsAction="ifRoom"/>
+<!--    <item android:id="@+id/positionCB"-->
+<!--        android:title=""-->
+<!--        app:actionViewClass="com.google.android.material.switchmaterial.SwitchMaterial"-->
+<!--        app:showAsAction="ifRoom"/>-->
+
+    <item android:id="@+id/dragMode"
+        android:icon="@drawable/ic_drag_drop"
+        android:title="@string/setup_custom_sorting"
+        app:showAsAction="ifRoom" />
 
     <item android:id="@+id/checkMode"
         android:title=""

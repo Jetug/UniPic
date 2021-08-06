@@ -20,16 +20,18 @@ class DataSaver() {
 //    @JvmName("saveDir1")
 
     init {
-        createSaveFile()
+        isStoragePermissionGranted()
     }
 
     fun saveDir(path: Collection<String>){
+        isStoragePermissionGranted()
         path.forEach{
             writeToFile(it)
         }
     }
 
     fun saveDir(path: String){
+        isStoragePermissionGranted()
         writeToFile(path)
     }
 
@@ -48,6 +50,7 @@ class DataSaver() {
     }
 
     fun getSavedDirs(): ArrayList<File>{
+        isStoragePermissionGranted()
         createSaveFile()
         val paths = ArrayList<File>()
         val ex = saveFile.exists()
@@ -81,6 +84,7 @@ class DataSaver() {
     }
 
     fun saveImagePositions(directoryPath: String, files:MutableList<ThumbnailModel>){
+        isStoragePermissionGranted()
         val sortingFileName = "Sort.txt"
         val sortingFile = File(File(directoryPath), sortingFileName)
 
@@ -101,6 +105,7 @@ class DataSaver() {
     }
 
     fun getCustomMediaList(directoryPath: String):MutableList<ThumbnailModel>{
+        isStoragePermissionGranted()
         val sortingFileName = "Sort.txt"
         val sortingFile = File(File(directoryPath),sortingFileName)
         val files = mutableListOf<ThumbnailModel>()
@@ -117,6 +122,7 @@ class DataSaver() {
     }
 
     fun getCustomMediaListF(directoryPath: String):MutableList<File>{
+        isStoragePermissionGranted()
         val sortingFileName = "Sort.txt"
         val sortingFile = File(File(directoryPath),sortingFileName)
         val files = mutableListOf<File>()
@@ -134,6 +140,7 @@ class DataSaver() {
 
 
     fun normalizeSaveFile(){
+        isStoragePermissionGranted()
         var text = ""
         saveFile.bufferedReader().forEachLine {
             val file = File(it)

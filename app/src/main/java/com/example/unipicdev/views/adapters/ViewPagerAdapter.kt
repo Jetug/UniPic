@@ -1,6 +1,7 @@
 package com.example.unipicdev.views.adapters
 
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.alexvasilkov.gestures.commons.RecyclePagerAdapter
 import com.alexvasilkov.gestures.views.GestureImageView
@@ -9,7 +10,7 @@ import java.io.File
 import java.nio.file.Files
 
 
-class ViewPagerAdapter(private val viewPager: ViewPager, val medias: List<File>) :
+class ViewPagerAdapter(private val activity: AppCompatActivity, private val viewPager: ViewPager, val medias: List<File>) :
     RecyclePagerAdapter<ViewPagerAdapter.ViewHolder>() {
 
     class ViewHolder(container: ViewGroup) : RecyclePagerAdapter.ViewHolder(GestureImageView(container.context)) {
@@ -35,6 +36,4 @@ class ViewPagerAdapter(private val viewPager: ViewPager, val medias: List<File>)
     override fun onRecycleViewHolder(holder: ViewHolder) {
         //GlideHelper.clear(holder.image)
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.example.unipicdev.views.activities
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.KeyEvent
@@ -8,20 +9,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.CompoundButton
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import com.alexvasilkov.gestures.animation.ViewPositionAnimator.PositionUpdateListener
-import com.alexvasilkov.gestures.commons.RecyclePagerAdapter
 import com.alexvasilkov.gestures.transition.GestureTransitions
 import com.alexvasilkov.gestures.transition.ViewsTransitionAnimator
 import com.alexvasilkov.gestures.transition.tracker.SimpleTracker
 import com.example.unipicdev.R
 import com.example.unipicdev.models.MediaSearcher
 import com.example.unipicdev.models.ThumbnailModel
-import com.example.unipicdev.models.room.saveMediaSorting
+import com.example.unipicdev.models.room.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.MediaAdapter
 import com.example.unipicdev.views.adapters.OnPaintingClickListener
@@ -53,28 +52,25 @@ class MediaGalleryActivity : BaseActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_gallery)
+
         initImageRV()
         initViewPager()
+
+        supportActionBar?.title = File(dirPath).name
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_media_gallery, menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        if(menu != null){
-            val sw = menu.findItem(R.id.positionCB).actionView?.findViewById<SwitchMaterial>(R.id.positionCB)
-            sw?.setOnCheckedChangeListener(::onChecked)
-        }
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.sorting -> sort()
+            R.id.dragMode -> enableDragging()
             R.id.checkMode -> enableSelectionMode()
-//            R.id.byName -> imageAdapter.sort(SortingType.NAME)
-//            R.id.byCreationDate -> imageAdapter.sort(SortingType.CREATION_DATE)
-//            R.id.byModificationDate -> imageAdapter.sort(SortingType.MODIFICATION_DATE)
-//            R.id.custom -> imageAdapter.sort(SortingType.CUSTOM)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -195,13 +191,14 @@ class MediaGalleryActivity : BaseActivity(){
 
     private fun initViewPager(){}
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun sort(){
         val dialog = SortingDialog(false){
                 sorting, order ->
             imageAdapter.sort(sorting, order)
 
             CoroutineScope(Dispatchers.Default).launch{
-                saveMediaSorting(dirPath, sorting, order)
+                DatabaseApi.saveMediaSorting(dirPath, sorting, order)
             }
         }
         dialog.show(supportFragmentManager, "SortingDialog")
@@ -211,7 +208,7 @@ class MediaGalleryActivity : BaseActivity(){
         imageAdapter.selectionMode = !imageAdapter.selectionMode
     }
 
-    private fun onChecked(buttonView: CompoundButton, isChecked: Boolean){
-        imageAdapter.isDragEnabled = isChecked
+    private fun enableDragging(){
+        imageAdapter.dragMode = true
     }
 }

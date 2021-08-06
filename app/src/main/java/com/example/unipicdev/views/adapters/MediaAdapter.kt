@@ -1,18 +1,20 @@
 package com.example.unipicdev.views.adapters
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.*
 import com.example.unipicdev.models.DataSaver
 import com.example.unipicdev.models.ThumbnailModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
-import com.example.unipicdev.models.room.getMediaSorting
+import com.example.unipicdev.models.room.DatabaseApi
+import com.example.unipicdev.models.room.*
 import com.example.unipicdev.views.dialogs.DateEditingDialog
 import com.example.unipicdev.views.dialogs.*
 import java.io.File
@@ -32,7 +34,7 @@ class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailMod
         get() = R.menu.menu_media_work
 
     init{
-        val pair = getMediaSorting(directory)
+        val pair = DatabaseApi.getMediaSorting(directory)
         val sorting: SortingType = getNotNoneSortingType(pair.first)
         val order: Order = getNotNoneSortingOrder(pair.second)
         sort(sorting, order)
@@ -80,6 +82,7 @@ class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailMod
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun sort(sortingType: SortingType, order: Order) {
         if (sortingType == SortingType.CUSTOM){
             val custom = dataSaver.getCustomMediaList(directory)
@@ -98,6 +101,7 @@ class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailMod
     }
 
     private fun rename(){
+        @RequiresApi(Build.VERSION_CODES.O)
         fun onRename(position: Int, file: File){
             val item = selectedItems[position]
             val newItem = item

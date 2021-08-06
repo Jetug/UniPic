@@ -7,8 +7,9 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.unipicdev.appContext
+import com.example.unipicdev.currentActivity
 
-fun isStoragePermissionGranted(activity: AppCompatActivity): Boolean {
+fun isStoragePermissionGranted(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         if (appContext.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
             && appContext.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED ) {
@@ -17,7 +18,7 @@ fun isStoragePermissionGranted(activity: AppCompatActivity): Boolean {
         } else {
             Log.v("My", "Permission is revoked")
             ActivityCompat.requestPermissions(
-                activity,
+                currentActivity,
                 arrayOf(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE

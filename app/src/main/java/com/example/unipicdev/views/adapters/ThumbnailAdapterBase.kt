@@ -16,14 +16,12 @@ import com.example.unipicdev.R
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.SortingType.*
-import com.example.unipicdev.views.dialogs.DateEditingDialog
 import com.example.unipicdev.views.dialogs.DeletingDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.nio.file.FileSystems
 import java.nio.file.Files.readAttributes
-import java.nio.file.Files.setAttribute
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 
@@ -78,19 +76,39 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     var sortingOrder: Order = Order.ASCENDING
 
     var selectionMode: Boolean = false
-        get() = field
+        set(value) {
+            if(value != field) {
+                if (value)
+                    enterSelectionMode()
+                else
+                    exitSelectionMode()
+                field = value
+            }
+        }
+
+    var dragMode:Boolean = false
         set(value) {
             if (value)
-                startActionMode()
-    //        else
-    //            finishActionMode()
+                selectionMode = true
             field = value
         }
 
-    var isDragEnabled = false
-
     abstract fun prepareActionMode(menu: Menu)
     abstract fun actionItemPressed(id: Int)
+
+    private fun enterSelectionMode(){
+        if(actionMode == null) {
+            startActionMode()
+        }
+    }
+
+    private fun exitSelectionMode(){
+        if(actionMode != null){
+            finishActionMode()
+        }
+        unselectAll()
+        dragMode = false
+    }
 
     init {
         actionModeCallback = object: ActionMode.Callback {
@@ -128,8 +146,9 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
             }
 
             override fun onDestroyActionMode(mode: ActionMode?) {
-                cancelSelecting()
-                actionMode = null;
+                //cancelSelecting()
+                actionMode = null
+                selectionMode = false
             }
         }
     }
@@ -163,7 +182,7 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         viewHolder.checkCircle.visibility = View.INVISIBLE
 
         viewHolder.imageView.setOnClickListener{
-            if (selectionMode || isDragEnabled){
+            if (selectionMode || dragMode){
                 if(actionMode == null)
                     startActionMode()
                 select()
@@ -178,12 +197,12 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
 
         viewHolder.imageView.setOnLongClickListener {
-            if(!isDragEnabled) {
+            if(!dragMode) {
                 selectionMode = true
                 select()
             }
 
-            if (actionMode == null && !isDragEnabled)
+            if (actionMode == null && !dragMode)
                 startActionMode()
 
             return@setOnLongClickListener true
@@ -226,7 +245,7 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
             }
 
             override fun isLongPressDragEnabled(): Boolean {
-                return isDragEnabled
+                return dragMode
             }
         }
 

@@ -1,24 +1,14 @@
 package com.example.unipicdev.views.activities
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.CompoundButton
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,8 +25,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.net.toFile
 import com.example.unipicdev.models.isStoragePermissionGranted
 
 
@@ -52,16 +40,13 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
         appContext = applicationContext;
-        isStoragePermissionGranted(this)
+        isStoragePermissionGranted()
         directorySearcher = DirectorySearcher(appContext)
 
         CoroutineScope(Dispatchers.Main).launch {
             initFolderRV()
         }
 
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSION)
-//        }
 //        var strSDCardPath = System.getenv("SECONDARY_STORAGE")
 //        if (null == strSDCardPath || strSDCardPath.isEmpty()) {
 //            strSDCardPath = System.getenv("EXTERNAL_SDCARD_STORAGE")
@@ -70,32 +55,36 @@ class MainActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        if(menu != null){
-            val sw = menu.findItem(R.id.positionCB).actionView?.findViewById<SwitchMaterial>(R.id.positionCB)
-            sw?.setOnCheckedChangeListener(::onChecked)
-        }
         return true
     }
+
+//    R.id.byName -> folderAdapter.sort(SortingType.NAME)
+//            R.id.byCreationDate -> folderAdapter.sort(SortingType.CREATION_DATE)
+//            R.id.byModificationDate -> folderAdapter.sort(SortingType.MODIFICATION_DATE)
+//            R.id.custom -> folderAdapter.sort(SortingType.CUSTOM)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.sorting -> sort()
-            R.id.byName -> folderAdapter.sort(SortingType.NAME)
-            R.id.byCreationDate -> folderAdapter.sort(SortingType.CREATION_DATE)
-            R.id.byModificationDate -> folderAdapter.sort(SortingType.MODIFICATION_DATE)
-            R.id.custom -> folderAdapter.sort(SortingType.CUSTOM)
-            R.id.showHidden -> {
-                if(!folderAdapter.showHidden) {
-                    folderAdapter.showHidden = true
-                    item.title = resources.getString(R.string.dont_show_hidden)
-                }
-                else{
-                    folderAdapter.showHidden = false
-                    item.title = resources.getString(R.string.show_hidden)
-                }
-            }
+            R.id.dragMode ->enableDragging()
+            R.id.showHidden -> showHidden(item)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun enableDragging(){
+        folderAdapter.dragMode = true
+    }
+
+    private fun showHidden(item: MenuItem){
+        if(!folderAdapter.showHidden) {
+            folderAdapter.showHidden = true
+            item.title = resources.getString(R.string.dont_show_hidden)
+        }
+        else{
+            folderAdapter.showHidden = false
+            item.title = resources.getString(R.string.show_hidden)
+        }
     }
 
     private fun sort(){
@@ -104,10 +93,6 @@ class MainActivity : BaseActivity() {
             folderAdapter.sort(sorting, order)
         }
         dialog.show(supportFragmentManager, "SortingDialog")
-    }
-
-    private fun onChecked(buttonView: CompoundButton, isChecked: Boolean){
-        folderAdapter.isDragEnabled = isChecked
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -148,27 +133,5 @@ class MainActivity : BaseActivity() {
         val intent = Intent(mainActivity, MediaGalleryActivity::class.java)
         intent.putExtra("dirPath", path)
         startActivity(intent)
-    }
-
-    private fun permissionGranted(): Boolean {
-        return (ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED)
-    }
-
-    private fun requestPermission() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ),
-            1
-        )
     }
 }

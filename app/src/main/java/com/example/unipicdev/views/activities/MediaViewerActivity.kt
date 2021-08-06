@@ -15,6 +15,10 @@ import com.veinhorn.scrollgalleryview.ScrollGalleryView
 import github.hellocsl.layoutmanager.gallery.GalleryLayoutManager
 //import kotlinx.android.synthetic.main.activity_image.*
 import java.io.File
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+
+
+
 
 
 class MediaViewerActivity : BaseActivity(){
@@ -44,18 +48,32 @@ class MediaViewerActivity : BaseActivity(){
 //        layoutManager.attach(recyclerView, position)
 //        recyclerView.adapter = ImageViewerAdapter(this, images)
 //
-//        supportActionBar?.title = ""
+        updateTitle(images[position])
 
         var viewPager: ViewPager? = null
         viewPager = findViewById(R.id.pager)
-        viewPager.adapter = ViewPagerAdapter(viewPager, images)
+        viewPager.adapter = ViewPagerAdapter(this, viewPager, images)
         viewPager.currentItem = position;
+        viewPager.addOnPageChangeListener(object : OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float,positionOffsetPixels: Int) {
+                updateTitle(images[position])
+            }
+
+            override fun onPageSelected(position: Int) {
+                // Check if this is the page you want.
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_media, menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         return true
+    }
+
+    private fun updateTitle(currentMedia: File){
+        supportActionBar?.title = currentMedia.nameWithoutExtension
     }
 
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
