@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import java.io.*
 
 class FolderModel (file: File):ThumbnailModel(file) {
+
     var images: Array<File> = arrayOf()
     init {
         CoroutineScope(Dispatchers.Default).launch{

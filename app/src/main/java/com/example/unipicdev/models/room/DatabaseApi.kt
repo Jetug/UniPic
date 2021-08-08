@@ -33,13 +33,12 @@ object DatabaseApi{
     }
 
     fun getAllSorting(): List<Sorting>{
-        return initSortingList()
+        return sortingList
     }
 
     fun getMediaSorting(directory: String): Pair<SortingType, Order>{
         val pair: Pair<SortingType, Order>
         val time = measureTimeMillis {
-            initSortingList()
             val sorting = getSortingByDir(directory)
 
             if (sorting == null)
@@ -47,8 +46,6 @@ object DatabaseApi{
             else
                 pair = SortingType.valueOf(sorting.sortingType) to
                         Order.valueOf(sorting.sortingOrder)
-
-
         }
         Log.d("My", "getMediaSorting $time ms")
         return pair
@@ -60,7 +57,6 @@ object DatabaseApi{
 
     suspend fun saveMediaSorting(directory: String, sortingType: SortingType, order: Order){
         val sorting = Sorting(directory, sortingType.toString(), order.toString())
-        initSortingList()
         insertSorting(sorting)
         sortingDao.insert(sorting)
         onMediaSortingSaved(directory)

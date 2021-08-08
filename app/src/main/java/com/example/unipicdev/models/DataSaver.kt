@@ -105,31 +105,25 @@ class DataSaver() {
     }
 
     fun getCustomMediaList(directoryPath: String):MutableList<ThumbnailModel>{
-        isStoragePermissionGranted()
-        val sortingFileName = "Sort.txt"
-        val sortingFile = File(File(directoryPath),sortingFileName)
         val files = mutableListOf<ThumbnailModel>()
+        val buffList = getCustomMediaListF(directoryPath)
 
-        if (sortingFile.exists()) {
-            sortingFile.bufferedReader().forEachLine {
-                if (it != "") {
-                    val file = File(it)
-                    files.add(ThumbnailModel(file))
-                }
-            }
+        buffList.forEach{
+            files.add(ThumbnailModel(it))
         }
+
         return files
     }
 
     fun getCustomMediaListF(directoryPath: String):MutableList<File>{
         isStoragePermissionGranted()
-        val sortingFileName = "Sort.txt"
-        val sortingFile = File(File(directoryPath),sortingFileName)
+        val customSortingFileName = "Sort.txt"
+        val customSortingFile = File(File(directoryPath),customSortingFileName)
         val files = mutableListOf<File>()
 
-        if (sortingFile.exists()) {
-            sortingFile.bufferedReader().forEachLine {
-                if (it != "") {
+        if (customSortingFile.exists()) {
+            customSortingFile.bufferedReader().forEachLine {
+                if (it != "" && File(directoryPath, it).exists()) {
                     val file = File(it)
                     files.add(file)
                 }

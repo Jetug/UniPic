@@ -81,19 +81,9 @@ class DirectorySearcher(val context: Context) {
     private fun initDirList(){
         val dirs = appContext.getExternalFilesDirs(null)
         dirs.forEach {
-            val parent = getParentFile(it, 4)
+            val parent = it.getParentFile(4)
             dirList.add(parent)
         }
-    }
-
-    private fun getParentFile(file: File, downTo: Int): File {
-        var parent: File = file
-        for (i in 1..downTo){
-            if(parent.parentFile != null){
-                parent = parent.parentFile
-            }
-        }
-        return parent
     }
 
     private fun isMediaDirectory(folder: File): Boolean{

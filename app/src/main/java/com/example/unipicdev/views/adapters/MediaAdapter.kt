@@ -1,6 +1,7 @@
 package com.example.unipicdev.views.adapters
 
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -15,11 +16,14 @@ import com.example.unipicdev.models.ThumbnailModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.models.room.DatabaseApi
 import com.example.unipicdev.models.room.*
+import com.example.unipicdev.models.sortMedias
 import com.example.unipicdev.views.dialogs.DateEditingDialog
 import com.example.unipicdev.views.dialogs.*
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailModel>,
                    private var size: Int,
                    private val directory: String,
@@ -84,12 +88,22 @@ class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailMod
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun sort(sortingType: SortingType, order: Order) {
-        if (sortingType == SortingType.CUSTOM){
-            val custom = dataSaver.getCustomMediaList(directory)
-            reorderItems(custom)
-            super.sortingType = SortingType.CUSTOM
+        val time = measureTimeMillis {
+//            if (sortingType == SortingType.CUSTOM){
+//                val custom = dataSaver.getCustomMediaList(directory)
+//                reorderItems(custom)
+//                super.sortingType = SortingType.CUSTOM
+//            }
+//            else super.sort(sortingType, order)
+//            Log.d("My", "Old")
+
+            val sortedList = sortMedias(files.toTypedArray(), sortingType, order)
+            files = sortedList.toMutableList()
+            notifyDataSetChanged()
+            Log.d("My", "New")
+
         }
-        else super.sort(sortingType, order)
+        Log.d("My", "Sorting $time ms")
 
         mediaSortingType = sortingType
         mediaSortingOrder = order

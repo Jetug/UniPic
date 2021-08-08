@@ -17,10 +17,6 @@ import github.hellocsl.layoutmanager.gallery.GalleryLayoutManager
 import java.io.File
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 
-
-
-
-
 class MediaViewerActivity : BaseActivity(){
 
     private var position = 0
@@ -40,14 +36,16 @@ class MediaViewerActivity : BaseActivity(){
         return true
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_media, menu)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        return true
+    }
+
     private fun initRecyclerView(){
         val images = intent.getSerializableExtra("imageList") as ArrayList<File>
         val position = intent.getIntExtra("position",0)
-//        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-//        val layoutManager = GalleryLayoutManager(GalleryLayoutManager.HORIZONTAL)
-//        layoutManager.attach(recyclerView, position)
-//        recyclerView.adapter = ImageViewerAdapter(this, images)
-//
+
         updateTitle(images[position])
 
         var viewPager: ViewPager? = null
@@ -57,43 +55,17 @@ class MediaViewerActivity : BaseActivity(){
         viewPager.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float,positionOffsetPixels: Int) {
-                updateTitle(images[position])
+                //updateTitle(images[position])
             }
 
             override fun onPageSelected(position: Int) {
-                // Check if this is the page you want.
+                updateTitle(images[position])
             }
-        })
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_media, menu)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        return true
+        })
     }
 
     private fun updateTitle(currentMedia: File){
         supportActionBar?.title = currentMedia.nameWithoutExtension
     }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when(item.itemId){
-//            R.id.home -> {
-//                onHome()
-//                return true
-//            }
-//        }
-//
-//        return super.onOptionsItemSelected(item)
-//    }
-//
-//    private fun onHome(){
-//        val backStackEntryCount = supportFragmentManager.backStackEntryCount
-//        if (backStackEntryCount > 0) {
-//            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-//        } else {
-//            supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-//        }
-//        onBackPressed()
-//    }
 }

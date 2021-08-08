@@ -40,3 +40,13 @@ fun renameFile(file: File, newName: String, args: String): File{
 fun changeFileDate(file: File, date: DateTime){
     file.setLastModified(date.toDate().time)
 }
+
+fun File.getParentFile(downTo: Int): File {
+    var parent: File = this
+    for (i in 1..downTo){
+        if(parent.parentFile != null){
+            parent = parent.parentFile
+        }
+    }
+    return parent
+}

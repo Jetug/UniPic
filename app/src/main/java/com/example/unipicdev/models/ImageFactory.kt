@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.util.Log
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.unipicdev.getNotNoneSortingOrder
@@ -37,12 +39,22 @@ fun showFullImage(file: File, context: Context, imageView: ImageView, animateGif
 //private val sortingMap: MutableMap<String, Sorting> = mutableMapOf()
 
 class ImageFactory {
-    class SortingSave{
+    data class SortingSave(
+        var byName: Pair<String?, String?>? = null,
+        var byCreationTime: Pair<String?, String?>? = null,
+        var byModificationTime: Pair<String?, String?>? = null,
+        var by: Pair<String?, String?>? = null
 
-    }
+    )
+
+    data class ThumbnailSave(
+        val path: String,
+        val sortingType: SortingType,
+        val sortingOrder: Order,
+    )
 
     private val dataSaver = DataSaver()
-    private val thumbnails = mutableMapOf<String, String>()
+    private val thumbnails = mutableMapOf<String, ThumbnailSave>()
 
     fun getThumbnail(path: String, size: Int): Bitmap? {
         var bitmap = getBitmap(path)
@@ -63,10 +75,11 @@ class ImageFactory {
         }
     }
 
-    fun showFolderThumbnail(files: Array<File>, context: Context, imageView: ImageView, size: Int) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun showFolderThumbnail(files: Array<ThumbnailModel>, context: Context, imageView: ImageView, size: Int) {
         if(files.isNotEmpty()) {
             val time = measureTimeMillis {
-                val dirPath: String = files[0].parent
+                val dirPath: String = files[0].file.parent
                 var media = files
                 val pair: Pair<SortingType, Order>
                 val time = measureTimeMillis {
@@ -79,16 +92,19 @@ class ImageFactory {
                 var thumbnailFile: File = File("")
 
                 val time2 = measureTimeMillis {
-                    if(thumbnails.contains(dirPath)){
-                        thumbnailFile = File(thumbnails[dirPath])
+                    val save = thumbnails[dirPath]
+
+                    if(thumbnails.contains(dirPath) && save!!.sortingType == sorting && save.sortingOrder == order){
+                        thumbnailFile = File(save.path)
                     }
                     else {
-                        media = sort(media, sorting, order)
+                        media = sortMedias(media, sorting, order) //sort(media, sorting, order)
 
-                        for (currentFile in media) {
+                        for (currentItem in media) {
+                            val currentFile = currentItem.file
                             if (currentFile.isFile && isMediaFile(currentFile)) {
                                 thumbnailFile = currentFile
-                                thumbnails[dirPath] = thumbnailFile.absolutePath
+                                thumbnails[dirPath] = ThumbnailSave(thumbnailFile.absolutePath, sorting, order)
                                 break
                             }
                         }
@@ -102,39 +118,40 @@ class ImageFactory {
         }
     }
 
-    private fun sort(list:Array<File>, sortingType: SortingType, sortingOrder: Order): Array<File>{
-        var media = list
-
-        fun reverse(){if(sortingOrder == Order.DESCENDING) media.reverse()}
-
-        when (sortingType) {
-            SortingType.NONE -> {
+    @RequiresApi(Build.VERSION_CODES.O)
+//    private fun sort(list:Array<File>, sortingType: SortingType, sortingOrder: Order): Array<File>{
+//        var media = list
+//
+//        fun reverse(){if(sortingOrder == Order.DESCENDING) media.reverse()}
+//
+//        when (sortingType) {
+//            SortingType.NONE -> {
+////                media.sortBy { it.lastModified() }
+////                reverse()
+//            }
+//            SortingType.NAME -> {
+//                media.sortBy { it.name }
+//                reverse()
+//            }
+//            SortingType.CREATION_DATE -> {
+//                media.sortBy {
+//                    val path = FileSystems.getDefault().getPath(it.absolutePath)
+//                    val attr = Files.readAttributes(path, BasicFileAttributes::class.java)
+//                    return@sortBy attr.creationTime()
+//                }
+//                reverse()
+//            }
+//            SortingType.MODIFICATION_DATE -> {
 //                media.sortBy { it.lastModified() }
 //                reverse()
-            }
-            SortingType.NAME -> {
-                media.sortBy { it.name }
-                reverse()
-            }
-            SortingType.CREATION_DATE -> {
-                media.sortBy {
-                    val path = FileSystems.getDefault().getPath(it.absolutePath)
-                    val attr = Files.readAttributes(path, BasicFileAttributes::class.java)
-                    return@sortBy attr.creationTime()
-                }
-                reverse()
-            }
-            SortingType.MODIFICATION_DATE -> {
-                media.sortBy { it.lastModified() }
-                reverse()
-            }
-            SortingType.CUSTOM -> {
-                media = dataSaver.getCustomMediaListF(media[0].parent).toTypedArray()
-            }
-        }
-
-        return media
-    }
+//            }
+//            SortingType.CUSTOM -> {
+//                media = dataSaver.getCustomMediaListF(media[0].parent).toTypedArray()
+//            }
+//        }
+//
+//        return media
+//    }
 
     fun showFolderThumbnail(file: File, context: Context, imageView: ImageView, size: Int) {
         val files = file.listFiles()

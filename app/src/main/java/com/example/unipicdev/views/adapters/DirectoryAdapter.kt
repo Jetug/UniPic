@@ -1,10 +1,14 @@
 package com.example.unipicdev.views.adapters
 
+import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.*
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
@@ -12,10 +16,9 @@ import com.example.unipicdev.models.isHidden
 import com.example.unipicdev.models.room.DatabaseApi
 import com.example.unipicdev.views.dialogs.MediaRenamingDialog
 import com.example.unipicdev.views.dialogs.PropertiesDialog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
+@RequiresApi(Build.VERSION_CODES.O)
 class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderModel>, private val size: Int, onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, mutableListOf(), size, onClickListener)
 {
@@ -53,6 +56,23 @@ class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderMode
                 }
             }
         }
+
+        CoroutineScope(Dispatchers.Default).launch {
+            checkForSortingChanged()
+        }
+    }
+
+    private suspend fun checkForSortingChanged(){
+        while (true){
+            delay(5000)
+            withContext(Dispatchers.Main) {
+                notifyItemChanged(0)
+            }
+            Log.d("My", "updated")
+//            files.forEach{
+//
+//            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectoryAdapter.FolderHolder {
@@ -63,12 +83,12 @@ class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderMode
 
     override fun onBindViewHolder(viewHolder: FolderHolder, position: Int) {
         super.onBindViewHolder(viewHolder, position)
+        //viewHolder.setIsRecyclable(false)
+
         val item = files[position]
 
-        //imageCreator.showThumbnail( (item as FolderModel).images[0], viewHolder.imageView.context, viewHolder.imageView, size)
-
         CoroutineScope(Dispatchers.Main).launch {
-            imageCreator.showFolderThumbnail( (item as FolderModel).images, viewHolder.imageView.context, viewHolder.imageView, size)
+            imageCreator.showFolderThumbnail( (item as FolderModel).images.toThumbnailArray(), viewHolder.imageView.context, viewHolder.imageView, size)
         }
     }
 
@@ -89,6 +109,7 @@ class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderMode
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun sort(sortingType: SortingType, order: Order) {
         super.sort(sortingType, order)
         directorySortingType = sortingType
