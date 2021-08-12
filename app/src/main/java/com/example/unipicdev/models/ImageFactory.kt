@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.unipicdev.getNotNoneSortingOrder
 import com.example.unipicdev.getNotNoneSortingType
-import com.example.unipicdev.models.room.*
 import com.example.unipicdev.models.room.DatabaseApi.getMediaSorting
 import com.example.unipicdev.views.adapters.Order
 import com.example.unipicdev.views.adapters.SortingType
@@ -20,11 +19,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.attribute.BasicFileAttributes
 import kotlin.math.min
 import kotlin.system.measureTimeMillis
+import com.example.unipicdev.supportedExtension
 
 @SuppressLint("CheckResult")
 fun showFullImage(file: File, context: Context, imageView: ImageView, animateGifs: Boolean = false){
@@ -77,10 +74,10 @@ class ImageFactory {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun showFolderThumbnail(files: Array<ThumbnailModel>, context: Context, imageView: ImageView, size: Int) {
+        Log.d("My", "media input")
         if(files.isNotEmpty()) {
             val time = measureTimeMillis {
                 val dirPath: String = files[0].file.parent
-                var media = files
                 val pair: Pair<SortingType, Order>
                 val time = measureTimeMillis {
                     pair = getMediaSorting(dirPath)
@@ -92,12 +89,13 @@ class ImageFactory {
                 var thumbnailFile: File = File("")
 
                 val time2 = measureTimeMillis {
-                    val save = thumbnails[dirPath]
+                    val savedTN = thumbnails[dirPath]
 
-                    if(thumbnails.contains(dirPath) && save!!.sortingType == sorting && save.sortingOrder == order){
-                        thumbnailFile = File(save.path)
+                    if(thumbnails.contains(dirPath) && savedTN!!.sortingType == sorting && savedTN.sortingOrder == order && File(savedTN.path).exists()){
+                        thumbnailFile = File(savedTN.path)
                     }
                     else {
+                        var media = files
                         media = sortMedias(media, sorting, order) //sort(media, sorting, order)
 
                         for (currentItem in media) {
@@ -119,51 +117,50 @@ class ImageFactory {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-//    private fun sort(list:Array<File>, sortingType: SortingType, sortingOrder: Order): Array<File>{
-//        var media = list
-//
-//        fun reverse(){if(sortingOrder == Order.DESCENDING) media.reverse()}
-//
-//        when (sortingType) {
-//            SortingType.NONE -> {
-////                media.sortBy { it.lastModified() }
-////                reverse()
-//            }
-//            SortingType.NAME -> {
-//                media.sortBy { it.name }
-//                reverse()
-//            }
-//            SortingType.CREATION_DATE -> {
-//                media.sortBy {
-//                    val path = FileSystems.getDefault().getPath(it.absolutePath)
-//                    val attr = Files.readAttributes(path, BasicFileAttributes::class.java)
-//                    return@sortBy attr.creationTime()
-//                }
-//                reverse()
-//            }
-//            SortingType.MODIFICATION_DATE -> {
-//                media.sortBy { it.lastModified() }
-//                reverse()
-//            }
-//            SortingType.CUSTOM -> {
-//                media = dataSaver.getCustomMediaListF(media[0].parent).toTypedArray()
-//            }
-//        }
-//
-//        return media
-//    }
+    fun showFolderThumbnail(dir: File, context: Context, imageView: ImageView, size: Int) {
+        Log.d("My", "dir input")
+        val time = measureTimeMillis {
+            val dirPath: String = dir.absolutePath
+            val pair: Pair<SortingType, Order>
+            val time = measureTimeMillis {
+                pair = getMediaSorting(dirPath)
+            }
+            Log.d("My", "pair $time ms")
 
-    fun showFolderThumbnail(file: File, context: Context, imageView: ImageView, size: Int) {
-        val files = file.listFiles()
-        if(files != null) {
-            //showThumbnail(files[0], context, imageView, size, false)
-            for (currentFile in files) {
-                if (currentFile.isFile && supportedExtentions.contains(currentFile.extension)) {
-                    showThumbnail(currentFile, context, imageView, size, false)
-                    break
+            val sorting: SortingType = getNotNoneSortingType(pair.first)
+            val order: Order = getNotNoneSortingOrder(pair.second)
+            var thumbnailFile: File = File("")
+
+            val time2 = measureTimeMillis {
+                val savedTN = thumbnails[dirPath]
+                if(thumbnails.contains(dirPath) && savedTN!!.sortingType == sorting && savedTN.sortingOrder == order && File(savedTN.path).exists()){
+                    thumbnailFile = File(savedTN.path)
+                }
+                else {
+                    val dirFiles = dir.listFiles()
+                    if(dirFiles != null) {
+                        var media = dirFiles.toThumbnailArray()
+                        if (media.isNotEmpty()) {
+                            media = sortMedias(media, sorting, order) //sort(media, sorting, order)
+
+                            for (currentItem in media) {
+                                val currentFile = currentItem.file
+                                if (currentFile.isFile && isMediaFile(currentFile)) {
+                                    thumbnailFile = currentFile
+                                    thumbnails[dirPath] =
+                                        ThumbnailSave(thumbnailFile.absolutePath, sorting, order)
+                                    break
+                                }
+                            }
+                        }
+                    }
                 }
             }
+            Log.d("My", "when $time2 ms")
+
+            showThumbnail(thumbnailFile, context, imageView, size, false)
         }
+        Log.d("My", "showFolderThumbnail $time ms | thumbnails: ${thumbnails.size}")
     }
 
     fun getFolderThumbnail(path: String, size: Int): Bitmap? {
@@ -173,7 +170,7 @@ class ImageFactory {
 
         val files = folder.listFiles()
         for (currentFile in files) {
-            if (currentFile.isFile && supportedExtentions.contains(currentFile.extension)) {
+            if (currentFile.isFile && supportedExtension.contains(currentFile.extension)) {
                 val bmOptions = BitmapFactory.Options()
                 bitmap = getThumbnail(currentFile.absolutePath, size)
                 break
@@ -182,7 +179,7 @@ class ImageFactory {
         return bitmap
     }
 
-    private fun isMediaFile(file: File): Boolean = supportedExtentions.contains(file.extension)
+    private fun isMediaFile(file: File): Boolean = supportedExtension.contains(file.extension)
 
     private fun getBitmap(path: String): Bitmap? {
         var bitmap: Bitmap? = null

@@ -1,5 +1,6 @@
 package com.example.unipicdev.views.adapters
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,7 +16,6 @@ import com.example.unipicdev.models.DataSaver
 import com.example.unipicdev.models.ThumbnailModel
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.models.room.DatabaseApi
-import com.example.unipicdev.models.room.*
 import com.example.unipicdev.models.sortMedias
 import com.example.unipicdev.views.dialogs.DateEditingDialog
 import com.example.unipicdev.views.dialogs.*
@@ -86,24 +86,20 @@ class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailMod
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun sort(sortingType: SortingType, order: Order) {
+        super.sort(sortingType, order)
         val time = measureTimeMillis {
-//            if (sortingType == SortingType.CUSTOM){
-//                val custom = dataSaver.getCustomMediaList(directory)
-//                reorderItems(custom)
-//                super.sortingType = SortingType.CUSTOM
-//            }
-//            else super.sort(sortingType, order)
-//            Log.d("My", "Old")
-
             val sortedList = sortMedias(files.toTypedArray(), sortingType, order)
             files = sortedList.toMutableList()
             notifyDataSetChanged()
-            Log.d("My", "New")
-
         }
         Log.d("My", "Sorting $time ms")
+
+        //CoroutineScope(Dispatchers.Default).launch{
+        DatabaseApi.saveMediaSorting(directory, sortingType, order)
+        //}
 
         mediaSortingType = sortingType
         mediaSortingOrder = order
@@ -116,23 +112,23 @@ class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailMod
 
     private fun rename(){
         @RequiresApi(Build.VERSION_CODES.O)
-        fun onRename(position: Int, file: File){
+        fun onRename(position: Int, file: File) {
             val item = selectedItems[position]
-            val newItem = item
-            newItem.file = file
-            changeItem(item, newItem)
-            sort(sortingType)
+            item.file = file
+            changeItem(item, item)
+            //sort(sortingType)
         }
 
         fun onComplete(newFiles: MutableList<File>) {
-            for (position in 0 until newFiles.size) {
-                val item = selectedItems[position]
-                val newItem = item
-                newItem.file = newFiles[position]
-                changeItem(item, newItem)
-            }
+//            for (position in 0 until newFiles.size) {
+//                val item = selectedItems[position]
+//                val newItem = item
+//                newItem.file = newFiles[position]
+//                changeItem(item, newItem)
+//            }
             if(sortingType == SortingType.NAME)
                 sort(sortingType)
+            selectionMode = false
         }
 
         val dialog = MediaRenamingDialog(selectedItems.map{it.file}, ::onRename, ::onComplete)
@@ -149,16 +145,16 @@ class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailMod
     }
 
     private fun editDate(){
-        val dialog = DateEditingDialog(selectedItems)
+        val dialog = DateEditingDialog(selectedItems) { _, _ -> selectionMode = false }
+        if(sortingType == SortingType.MODIFICATION_DATE || sortingType == SortingType.CREATION_DATE)
+            sort(sortingType)
         createDialog(dialog)
     }
 
     private fun moveTo(){
-
     }
 
     private fun copyTo(){
-
     }
 
     companion object {

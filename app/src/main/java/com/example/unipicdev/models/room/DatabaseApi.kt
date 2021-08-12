@@ -4,6 +4,9 @@ import android.util.Log
 import com.example.unipicdev.models.room.entities.Sorting
 import com.example.unipicdev.views.adapters.Order
 import com.example.unipicdev.views.adapters.SortingType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.system.measureTimeMillis
 
@@ -55,10 +58,11 @@ object DatabaseApi{
         return getMediaSorting(directory.absolutePath)
     }
 
-    suspend fun saveMediaSorting(directory: String, sortingType: SortingType, order: Order){
+    fun saveMediaSorting(directory: String, sortingType: SortingType, order: Order){
         val sorting = Sorting(directory, sortingType.toString(), order.toString())
         insertSorting(sorting)
-        sortingDao.insert(sorting)
+        CoroutineScope(Dispatchers.Default).launch{
+            sortingDao.insert(sorting)}
         onMediaSortingSaved(directory)
     }
 

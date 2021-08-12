@@ -2,6 +2,7 @@ package com.example.unipicdev
 
 import com.example.unipicdev.views.adapters.Order
 import com.example.unipicdev.views.adapters.SortingType
+import java.io.File
 
 var mediaSortingType: SortingType = SortingType.NAME
 var mediaSortingOrder: Order = Order.ASCENDING
@@ -14,3 +15,5 @@ var defaultMediaSortingOrder: Order = Order.DESCENDING
 
 fun getNotNoneSortingType(sortingType: SortingType) = if(sortingType == SortingType.NONE) defaultMediaSortingType else sortingType
 fun getNotNoneSortingOrder(order: Order) = if(order == Order.NONE) defaultMediaSortingOrder else order
+
+val supportedExtension = arrayOf("jpg","jpeg","bmp","png","gif")

@@ -1,5 +1,6 @@
 package com.example.unipicdev.views.adapters
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -58,7 +59,7 @@ class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderMode
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            checkForSortingChanged()
+            //checkForSortingChanged()
         }
     }
 
@@ -87,8 +88,9 @@ class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderMode
 
         val item = files[position]
 
-        CoroutineScope(Dispatchers.Main).launch {
-            imageCreator.showFolderThumbnail( (item as FolderModel).images.toThumbnailArray(), viewHolder.imageView.context, viewHolder.imageView, size)
+        CoroutineScope(Dispatchers.Default).launch {
+            //imageCreator.showFolderThumbnail( (item as FolderModel).images.toThumbnailArray(), viewHolder.imageView.context, viewHolder.imageView, size)
+            imageCreator.showFolderThumbnail(item.file, viewHolder.imageView.context, viewHolder.imageView, size)
         }
     }
 
@@ -100,18 +102,20 @@ class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderMode
         if(selectedItems.isEmpty()) return
 
         when(id){
-            R.id.rename -> rename()
             R.id.options -> options()
-            R.id.editDate -> editDate()
-            R.id.moveTo -> moveTo()
-            R.id.copyTo -> copyTo()
             R.id.delete -> delete()
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun sort(sortingType: SortingType, order: Order) {
         super.sort(sortingType, order)
+
+        val sortedList = sortDirs(files.toTypedArray(), sortingType, order)
+        files = sortedList.toMutableList()
+        notifyDataSetChanged()
+
         directorySortingType = sortingType
         directorySortingOrder = order
     }

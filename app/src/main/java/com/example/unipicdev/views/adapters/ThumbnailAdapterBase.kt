@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
+import com.example.unipicdev.models.room.DatabaseApi
 import com.example.unipicdev.views.adapters.SortingType.*
 import com.example.unipicdev.views.dialogs.DeletingDialog
 import kotlinx.coroutines.CoroutineScope
@@ -72,8 +73,8 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
 
     abstract val actionMenuId: Int
 
-    var sortingType: SortingType = NAME
-    var sortingOrder: Order = Order.ASCENDING
+    open var sortingType: SortingType = NAME
+    open var sortingOrder: Order = Order.ASCENDING
 
     var selectionMode: Boolean = false
         set(value) {
@@ -259,34 +260,10 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
 
     @RequiresApi(Build.VERSION_CODES.O)
     open fun sort(sortingType: SortingType, order: Order = Order.ASCENDING){
-        fun reverse()
-        {
-            if(order == Order.DESCENDING) files.reverse()
-        }
-
-        when(sortingType){
-            NAME -> {
-                files.sortBy { it.file.name }
-                reverse()
-            }
-            CREATION_DATE -> {
-                files.sortBy {
-                    val path = FileSystems.getDefault().getPath(it.file.absolutePath)
-                    val attr = readAttributes(path, BasicFileAttributes::class.java)
-                    return@sortBy attr.creationTime()
-                }
-                reverse()
-            }
-            MODIFICATION_DATE -> {
-                files.sortBy{ it.file.lastModified() }
-                reverse()
-            }
-            else -> {}
-        }
-        notifyDataSetChanged()
         this.sortingType = sortingType
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     open fun addItem(file: ThumbnailModel){
         CoroutineScope(Dispatchers.Main).launch {
             files.add(file)
@@ -376,6 +353,7 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
                 deleteFile(it.file)
                 removeItem(it)
             }
+            selectionMode = false
         }
         createDialog(dialog)
     }

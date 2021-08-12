@@ -20,28 +20,6 @@ fun sortDirs(list:Array<ThumbnailModel>, sortingType: SortingType, sortingOrder:
         return dirs
     }
 
-//    when (sortingType) {
-//        SortingType.NONE -> {
-//
-//        }
-//        SortingType.NAME -> {
-//            dirs.sortBy { it.file.name }
-//            reverse()
-//        }
-//        SortingType.CREATION_DATE -> {
-//            dirs.sortBy {
-//                val path = FileSystems.getDefault().getPath(it.file.absolutePath)
-//                val attr = Files.readAttributes(path, BasicFileAttributes::class.java)
-//                return@sortBy attr.creationTime()
-//            }
-//            reverse()
-//        }
-//        SortingType.MODIFICATION_DATE -> {
-//            dirs.sortBy { it.file.lastModified() }
-//            reverse()
-//        }
-//    }
-
     dirs.sortWith(Comparator { o1, o2 ->
         o1 as ThumbnailModel
         o2 as ThumbnailModel

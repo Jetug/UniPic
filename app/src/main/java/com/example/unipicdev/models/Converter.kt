@@ -9,3 +9,10 @@ fun Array<File>.toThumbnailArray(): Array<ThumbnailModel> {
     }
     return buffList.toTypedArray()
 }
+
+fun Array<File>.containsMediaFiles(): Boolean {
+    this.forEach {
+        if (isMediaFile(it)) return true
+    }
+    return false
+}

@@ -36,20 +36,23 @@ class MediaRenamingDialog(var files: List<File>,
 
         if(files.size == 1){
             val file = files[0]
-            val newFile = renameFile(file, "", newName)
-            //onRename(0, newFile)
+            val newFile = renameFile(file, newName, "")
+            onRename(0, newFile)
             newFileNames.add(newFile)
         }
         else {
             for ((i, file) in files.withIndex()) {
                 val num = i + 1
                 val newFile = renameFile(file, newName, num.toString())
-                //onRename(0, newFile)
+                onRename(i, newFile)
                 newFileNames.add(newFile)
             }
-            //dialog.cancel()
         }
         onComplete(newFileNames)
+    }
+
+    private fun renameItem(){
+
     }
 
 //    interface OnCompleteListener {

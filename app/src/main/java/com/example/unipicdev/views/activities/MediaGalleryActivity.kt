@@ -87,6 +87,7 @@ class MediaGalleryActivity : BaseActivity(){
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initImageRV(){
         val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -197,9 +198,7 @@ class MediaGalleryActivity : BaseActivity(){
                 sorting, order ->
             imageAdapter.sort(sorting, order)
 
-            CoroutineScope(Dispatchers.Default).launch{
-                DatabaseApi.saveMediaSorting(dirPath, sorting, order)
-            }
+
         }
         dialog.show(supportFragmentManager, "SortingDialog")
     }

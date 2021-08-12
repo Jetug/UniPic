@@ -3,11 +3,13 @@ package com.example.unipicdev.views.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.DatePicker
 import android.widget.NumberPicker
 import android.widget.TimePicker
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import com.example.unipicdev.R
 import com.example.unipicdev.models.ThumbnailModel
@@ -60,6 +62,7 @@ class DateEditingDialog(private val selectedItems: MutableList<ThumbnailModel>, 
             .create()
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun onPositiveButtonClick(dialog: DialogInterface, id: Int){
         val f = dialog as Dialog
         val year = datePicker.year

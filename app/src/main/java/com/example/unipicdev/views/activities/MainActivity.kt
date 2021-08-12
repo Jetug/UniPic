@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.unipicdev.models.isStoragePermissionGranted
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : BaseActivity() {
@@ -43,14 +44,9 @@ class MainActivity : BaseActivity() {
         isStoragePermissionGranted()
         directorySearcher = DirectorySearcher(appContext)
 
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             initFolderRV()
         }
-
-//        var strSDCardPath = System.getenv("SECONDARY_STORAGE")
-//        if (null == strSDCardPath || strSDCardPath.isEmpty()) {
-//            strSDCardPath = System.getenv("EXTERNAL_SDCARD_STORAGE")
-//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -58,11 +54,7 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-//    R.id.byName -> folderAdapter.sort(SortingType.NAME)
-//            R.id.byCreationDate -> folderAdapter.sort(SortingType.CREATION_DATE)
-//            R.id.byModificationDate -> folderAdapter.sort(SortingType.MODIFICATION_DATE)
-//            R.id.custom -> folderAdapter.sort(SortingType.CUSTOM)
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.sorting -> sort()
@@ -87,6 +79,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun sort(){
         val dialog = SortingDialog(true){
             sorting, order ->
@@ -102,7 +95,8 @@ class MainActivity : BaseActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-    private fun initFolderRV(){
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun initFolderRV(){
         val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
@@ -116,7 +110,9 @@ class MainActivity : BaseActivity() {
         val adapter = DirectoryAdapter(this, ArrayList(), width, object : ItemOnClickListener {
             override fun onClick(path: String, pos: Int) = folderItemOnClick(path, pos)
         })
-        dndRV.adapter = adapter
+        withContext(Dispatchers.Main){
+            dndRV.adapter = adapter
+        }
         folderAdapter = adapter
 
          @RequiresApi(Build.VERSION_CODES.O)
