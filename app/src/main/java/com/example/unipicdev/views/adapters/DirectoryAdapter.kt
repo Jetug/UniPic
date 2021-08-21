@@ -23,6 +23,8 @@ import kotlinx.coroutines.*
 class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderModel>, private val size: Int, onClickListener: ItemOnClickListener)
     : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, mutableListOf(), size, onClickListener)
 {
+    private val imageCreator = ImageFactory()
+
     class FolderHolder(view: View): ThumbnailHolder(view)
 
     private var hiddenFolders: MutableList<FolderModel> = mutableListOf()

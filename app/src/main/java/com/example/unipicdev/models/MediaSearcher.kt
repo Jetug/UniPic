@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
-fun isMediaFile(file:File):Boolean = supportedExtension.contains(file.extension)
+//fun isMediaFile(file:File):Boolean = supportedExtension.contains(file.extension)
 
 class  MediaSearcher {
     fun showImageFiles(path: String, onFind: (file: File) -> Unit) {
@@ -14,7 +14,7 @@ class  MediaSearcher {
             val dirs = File(path).listFiles()
             if (dirs != null) {
                 for (file in dirs) {
-                    if (isMediaFile(file)) {
+                    if (file.isMediaFile()) {
                         onFind(file)
                     }
                 }
@@ -28,7 +28,7 @@ class  MediaSearcher {
             val dirs = File(path).listFiles()
             if (dirs != null) {
                 for (file in dirs) {
-                    if (isMediaFile(file)) {
+                    if (file.isMediaFile()) {
                         result.add(file)
                     }
                 }

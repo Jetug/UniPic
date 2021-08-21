@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -27,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.unipicdev.models.isStoragePermissionGranted
 import kotlinx.coroutines.withContext
+import kotlin.system.measureTimeMillis
 
 
 class MainActivity : BaseActivity() {
@@ -43,6 +45,21 @@ class MainActivity : BaseActivity() {
         appContext = applicationContext;
         isStoragePermissionGranted()
         directorySearcher = DirectorySearcher(appContext)
+
+//        val mList = mutableListOf<String>(
+//            "test","test","test","test","test","test","test","test","test","test","test","test","test"
+//            ,"test","test","test","test","test","test","test","test","test","test","test","test","test"
+//            ,"test","test","test","test","test","test","test","test","test","test","test","test","test")
+//
+//        val time2 = measureTimeMillis {
+//            mList.toList()
+//        }
+//        Log.d("My", "list $time2 ms")
+//
+//        val time1 = measureTimeMillis {
+//            mList.toTypedArray()
+//        }
+//        Log.d("My", "array $time1 ms")
 
         CoroutineScope(Dispatchers.Default).launch {
             initFolderRV()

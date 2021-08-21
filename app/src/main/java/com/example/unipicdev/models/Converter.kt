@@ -12,7 +12,7 @@ fun Array<File>.toThumbnailArray(): Array<ThumbnailModel> {
 
 fun Array<File>.containsMediaFiles(): Boolean {
     this.forEach {
-        if (isMediaFile(it)) return true
+        if (it.isMediaFile()) return true
     }
     return false
 }

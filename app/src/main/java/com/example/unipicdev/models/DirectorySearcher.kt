@@ -1,12 +1,14 @@
 package com.example.unipicdev.models
 
 import android.content.Context
+import android.util.Log
 import com.example.unipicdev.appContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 // "/storage/emulated/0/"
 // "/storage/7A5A-1CF6/"
@@ -39,7 +41,10 @@ class DirectorySearcher(val context: Context) {
 
     fun getDirectories(onFind: (file: FolderModel) -> Unit ){
         searchJob = CoroutineScope(Dispatchers.Default).launch{
-            showSavedDirs(onFind)
+            val time = measureTimeMillis {
+                showSavedDirs(onFind)
+            }
+            Log.d("My", "showSavedDirs $time ms")
 
             dirList.forEach{
                 searchDirectories(it, onFind)
@@ -54,7 +59,7 @@ class DirectorySearcher(val context: Context) {
     private fun showSavedDirs(onFind: (file: FolderModel) -> Unit){
         savedDirectories = dataSaver.getSavedDirs()
         for(dir in savedDirectories){
-            if(dir.exists())
+            if(dir.exists() && dir.containsMediaFiles())
                 onFind(FolderModel(dir))
         }
     }
@@ -64,7 +69,7 @@ class DirectorySearcher(val context: Context) {
         if (directories != null) {
             for (file in directories) {
                 if (file.isDirectory) {
-                    if (isMediaDirectory(file) && !savedDirectories.contains(file) && isObservableDir(file) /*&& !startsWithDot(file.name)*/) {
+                    if (isMediaDirectory(file) && !savedDirectories.contains(file) && isObservableDir(file)  /*&& !startsWithDot(file.name)*/) {
                         onFind(FolderModel(file))
                         dataSaver.saveDir(file.absolutePath)
                     }
@@ -90,7 +95,7 @@ class DirectorySearcher(val context: Context) {
         val files:Array<File>? = folder.listFiles()
         if (files != null){
             for (file in files){
-                if (file.isFile && isMediaFile(file)){
+                if (file.isFile && file.isMediaFile()){
                     return true
                 }
             }

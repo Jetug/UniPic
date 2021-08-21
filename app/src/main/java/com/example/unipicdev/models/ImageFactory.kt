@@ -100,7 +100,7 @@ class ImageFactory {
 
                         for (currentItem in media) {
                             val currentFile = currentItem.file
-                            if (currentFile.isFile && isMediaFile(currentFile)) {
+                            if (currentFile.isFile && currentFile.isMediaFile()) {
                                 thumbnailFile = currentFile
                                 thumbnails[dirPath] = ThumbnailSave(thumbnailFile.absolutePath, sorting, order)
                                 break
@@ -145,7 +145,7 @@ class ImageFactory {
 
                             for (currentItem in media) {
                                 val currentFile = currentItem.file
-                                if (currentFile.isFile && isMediaFile(currentFile)) {
+                                if (currentFile.isFile && currentFile.isMediaFile()) {
                                     thumbnailFile = currentFile
                                     thumbnails[dirPath] =
                                         ThumbnailSave(thumbnailFile.absolutePath, sorting, order)
@@ -179,7 +179,7 @@ class ImageFactory {
         return bitmap
     }
 
-    private fun isMediaFile(file: File): Boolean = supportedExtension.contains(file.extension)
+    //private fun isMediaFile(file: File): Boolean = supportedExtension.contains(file.extension)
 
     private fun getBitmap(path: String): Bitmap? {
         var bitmap: Bitmap? = null

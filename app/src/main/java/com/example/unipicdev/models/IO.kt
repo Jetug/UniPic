@@ -1,10 +1,8 @@
 package com.example.unipicdev.models
 
+import com.example.unipicdev.supportedExtension
 import org.joda.time.DateTime
 import java.io.File
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.*
 
 
 fun deleteFile(file: File){
@@ -44,9 +42,32 @@ fun changeFileDate(file: File, date: DateTime){
 fun File.getParentFile(downTo: Int): File {
     var parent: File = this
     for (i in 1..downTo){
-        if(parent.parentFile != null){
-            parent = parent.parentFile
+        val buff = parent.parentFile
+        if(buff != null){
+            parent = buff
         }
     }
     return parent
+}
+
+fun File.isMediaFile() = supportedExtension.contains(this.extension)
+
+fun File.getMediaFiles(): Array<File>{
+    val medias = mutableListOf<File>()
+    if(this.isDirectory) {
+        val files = this.listFiles()
+        files?.forEach {
+            if (it.isMediaFile()) {
+                medias.add(it)
+            }
+        }
+    }
+    return medias.toTypedArray()
+}
+
+fun File.containsMediaFiles(): Boolean {
+    listFiles()?.forEach {
+        if (it.isMediaFile()) return true
+    }
+    return false
 }

@@ -5,7 +5,7 @@ import com.example.unipicdev.models.ImageFactory
 import com.example.unipicdev.models.MediaSearcher
 
 val mediaSearcher  = MediaSearcher()
-val imageCreator = ImageFactory()
+//val imageCreator = ImageFactory()
 
 fun setLayoutSize(view: ViewGroup, size: Int){
     val layoutParams = view.layoutParams

@@ -197,8 +197,6 @@ class MediaGalleryActivity : BaseActivity(){
         val dialog = SortingDialog(false){
                 sorting, order ->
             imageAdapter.sort(sorting, order)
-
-
         }
         dialog.show(supportFragmentManager, "SortingDialog")
     }
