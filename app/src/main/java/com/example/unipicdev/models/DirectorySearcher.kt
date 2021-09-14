@@ -30,7 +30,7 @@ fun startsWithDot(file: File): Boolean = startsWithDot(file.name)
 
 class DirectorySearcher(val context: Context) {
     private val dataSaver = DataSaver()
-    private var dirList = mutableListOf<File>()
+    private var initialDirs = mutableListOf<File>()
     private var savedDirectories: ArrayList<File> = ArrayList()
     private var searchJob: Job? = null
     private val notObservableDirs = arrayOf<String>(File("/storage/emulated/0/").absolutePath)
@@ -41,15 +41,33 @@ class DirectorySearcher(val context: Context) {
 
     fun getDirectories(onFind: (file: FolderModel) -> Unit ){
         searchJob = CoroutineScope(Dispatchers.Default).launch{
-            val time = measureTimeMillis {
+            //val time = measureTimeMillis {
                 showSavedDirs(onFind)
-            }
-            Log.d("My", "showSavedDirs $time ms")
+            //}
+            //Log.d("My", "showSavedDirs $time ms")
 
-            dirList.forEach{
+            initialDirs.forEach{
                 searchDirectories(it, onFind)
             }
         }
+    }
+
+    fun searchDirectories(onFind: (file: FolderModel) -> Unit ){
+        searchJob = CoroutineScope(Dispatchers.Default).launch{
+            initialDirs.forEach{
+                searchDirectories(it, onFind)
+            }
+        }
+    }
+
+    fun getSavedDirectories(): MutableList<File>{
+        var savedDirs = dataSaver.getSavedDirs()
+        var result = mutableListOf<File>()
+        for(dir in savedDirectories){
+            if(dir.exists() && dir.containsMediaFiles())
+                result.add(dir)
+        }
+        return result
     }
 
     fun stopSearching(){
@@ -87,7 +105,7 @@ class DirectorySearcher(val context: Context) {
         val dirs = appContext.getExternalFilesDirs(null)
         dirs.forEach {
             val parent = it.getParentFile(4)
-            dirList.add(parent)
+            initialDirs.add(parent)
         }
     }
 

@@ -15,15 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
-import com.example.unipicdev.models.room.DatabaseApi
 import com.example.unipicdev.views.adapters.SortingType.*
-import com.example.unipicdev.views.dialogs.DeletingDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.nio.file.FileSystems
-import java.nio.file.Files.readAttributes
-import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 
 
@@ -36,10 +31,10 @@ enum class Order{
 }
 
 abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailHolder>(
-        var activity: AppCompatActivity,
-        var files: MutableList<ThumbnailModel>,
-        private val size: Int,
-        private var onClickListener: ItemOnClickListener)
+    var activity: AppCompatActivity,
+    var files: MutableList<ThumbnailModel>,
+    private val size: Int,
+    private var onClickListener: ItemOnClickListener)
     :RecyclerView.Adapter<HolderType>()
 {
     open class ThumbnailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -345,17 +340,6 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     protected fun cancelSelecting(){
         unselectAll()
         selectionMode = false
-    }
-
-    protected fun delete(){
-        val dialog = DeletingDialog{
-            selectedItems.forEach{
-                deleteFile(it.file)
-                removeItem(it)
-            }
-            selectionMode = false
-        }
-        createDialog(dialog)
     }
 
     protected fun createDialog(dialog: DialogFragment){

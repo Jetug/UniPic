@@ -9,19 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.*
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.models.isHidden
 import com.example.unipicdev.models.room.DatabaseApi
-import com.example.unipicdev.views.dialogs.MediaRenamingDialog
+import com.example.unipicdev.views.dialogs.DeletingDialog
 import com.example.unipicdev.views.dialogs.PropertiesDialog
 import kotlinx.coroutines.*
 
 @RequiresApi(Build.VERSION_CODES.O)
-class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderModel>, private val size: Int, onClickListener: ItemOnClickListener)
-    : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, mutableListOf(), size, onClickListener)
+class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<ThumbnailModel>, private val size: Int, onClickListener: ItemOnClickListener)
+    : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, dirs, size, onClickListener)
 {
     private val imageCreator = ImageFactory()
 
@@ -156,6 +155,17 @@ class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<FolderMode
 
     private fun copyTo(){
 
+    }
+
+    private fun delete(){
+        val dialog = DeletingDialog{
+            selectedItems.forEach{
+                it.file.deleteALLMedias()
+                removeItem(it)
+            }
+            selectionMode = false
+        }
+        createDialog(dialog)
     }
 
     fun addItem(file: FolderModel) {

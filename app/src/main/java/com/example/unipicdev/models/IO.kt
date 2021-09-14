@@ -1,12 +1,20 @@
 package com.example.unipicdev.models
 
-import com.example.unipicdev.supportedExtension
+import com.example.unipicdev.supportedExtensions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import java.io.File
 
 
 fun deleteFile(file: File){
     file.delete()
+}
+
+fun File.delete(): Boolean{
+    return this.delete()
 }
 
 fun renameFile(file: File, newName: String, args: String): File{
@@ -50,7 +58,7 @@ fun File.getParentFile(downTo: Int): File {
     return parent
 }
 
-fun File.isMediaFile() = supportedExtension.contains(this.extension)
+fun File.isMediaFile() = supportedExtensions.contains(this.extension)
 
 fun File.getMediaFiles(): Array<File>{
     val medias = mutableListOf<File>()
@@ -70,4 +78,19 @@ fun File.containsMediaFiles(): Boolean {
         if (it.isMediaFile()) return true
     }
     return false
+}
+
+fun File.deleteALLMedias(onMediaDeleted: ()->Unit = {}, onComplete: () -> Unit = {}){
+    if(this.isDirectory){
+        val dir = this
+        CoroutineScope(Dispatchers.IO).launch {
+            val medias = dir.getMediaFiles()
+            medias.forEach {
+                it.delete()
+                onMediaDeleted()
+            }
+
+            onComplete()
+        }
+    }
 }

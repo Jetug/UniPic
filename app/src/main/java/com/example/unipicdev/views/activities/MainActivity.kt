@@ -15,8 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.R
 import com.example.unipicdev.appContext
-import com.example.unipicdev.models.DirectorySearcher
-import com.example.unipicdev.models.FolderModel
+import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.DirectoryAdapter
 import com.example.unipicdev.views.adapters.SortingType
@@ -26,7 +25,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.example.unipicdev.models.isStoragePermissionGranted
 import kotlinx.coroutines.withContext
 import kotlin.system.measureTimeMillis
 
@@ -45,21 +43,6 @@ class MainActivity : BaseActivity() {
         appContext = applicationContext;
         isStoragePermissionGranted()
         directorySearcher = DirectorySearcher(appContext)
-
-//        val mList = mutableListOf<String>(
-//            "test","test","test","test","test","test","test","test","test","test","test","test","test"
-//            ,"test","test","test","test","test","test","test","test","test","test","test","test","test"
-//            ,"test","test","test","test","test","test","test","test","test","test","test","test","test")
-//
-//        val time2 = measureTimeMillis {
-//            mList.toList()
-//        }
-//        Log.d("My", "list $time2 ms")
-//
-//        val time1 = measureTimeMillis {
-//            mList.toTypedArray()
-//        }
-//        Log.d("My", "array $time1 ms")
 
         CoroutineScope(Dispatchers.Default).launch {
             initFolderRV()
@@ -124,7 +107,10 @@ class MainActivity : BaseActivity() {
         val size: DisplayMetrics = getDisplaySize(mainActivity)
         val width = size.widthPixels / colCount
 
-        val adapter = DirectoryAdapter(this, ArrayList(), width, object : ItemOnClickListener {
+        //val savedDirs = directorySearcher.getSavedDirectories().toThumbnailMutableList()
+        val savedDirs = mutableListOf<ThumbnailModel>()
+
+        val adapter = DirectoryAdapter(this, savedDirs, width, object : ItemOnClickListener {
             override fun onClick(path: String, pos: Int) = folderItemOnClick(path, pos)
         })
         withContext(Dispatchers.Main){

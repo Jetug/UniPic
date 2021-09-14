@@ -12,11 +12,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unipicdev.*
-import com.example.unipicdev.models.DataSaver
-import com.example.unipicdev.models.ThumbnailModel
+import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.models.room.DatabaseApi
-import com.example.unipicdev.models.sortMedias
 import com.example.unipicdev.views.dialogs.DateEditingDialog
 import com.example.unipicdev.views.dialogs.*
 import java.io.File
@@ -33,6 +31,7 @@ class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailMod
     : ThumbnailAdapterBase<MediaAdapter.MediaHolder>(activity, medias, size, onClickListener)
 {
     private val dataSaver = DataSaver()
+    private val imageCreator = ImageFactory()
 
     override val actionMenuId: Int
         get() = R.menu.menu_media_work
@@ -155,6 +154,17 @@ class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailMod
     }
 
     private fun copyTo(){
+    }
+
+    private fun delete(){
+        val dialog = DeletingDialog{
+            selectedItems.forEach{
+                deleteFile(it.file)
+                removeItem(it)
+            }
+            selectionMode = false
+        }
+        createDialog(dialog)
     }
 
     companion object {

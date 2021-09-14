@@ -16,4 +16,4 @@ var defaultMediaSortingOrder: Order = Order.DESCENDING
 fun getNotNoneSortingType(sortingType: SortingType) = if(sortingType == SortingType.NONE) defaultMediaSortingType else sortingType
 fun getNotNoneSortingOrder(order: Order) = if(order == Order.NONE) defaultMediaSortingOrder else order
 
-val supportedExtension = arrayOf("jpg","jpeg","bmp","png","gif")
+val supportedExtensions = arrayOf("jpg","jpeg","bmp","png","gif")

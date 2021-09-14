@@ -8,6 +8,7 @@
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/drawable/ic_baseline_sort_24.xml" value="0.3828125" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/drawable/ic_check_circle.xml" value="0.3828125" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/drawable/ic_check_circle_24.xml" value="0.3828125" />
+        <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/drawable/ic_checkmark_24.xml" value="0.3828125" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/drawable/ic_delete_24.xml" value="0.3828125" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/drawable/ic_drag_drop.xml" value="0.3828125" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/drawable/ic_drag_drop_icon_151381.xml" value="0.3828125" />
@@ -16,6 +17,8 @@
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/layout/activity_image.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/layout/activity_image_gallery.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/layout/dialog_properties.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/layout/item_folder.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/layout/item_image.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/menu/menu_directory_work.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/menu/menu_main.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Jetug/YandexDisk/Projects/Android/UniPic/app/src/main/res/menu/menu_media.xml" value="0.36666666666666664" />

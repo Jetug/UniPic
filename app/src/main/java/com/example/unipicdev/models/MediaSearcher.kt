@@ -1,12 +1,11 @@
 package com.example.unipicdev.models
 
-import com.example.unipicdev.supportedExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
-//fun isMediaFile(file:File):Boolean = supportedExtension.contains(file.extension)
+//fun isMediaFile(file:File):Boolean = supportedExtensions.contains(file.extension)
 
 class  MediaSearcher {
     fun showImageFiles(path: String, onFind: (file: File) -> Unit) {

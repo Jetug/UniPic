@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.math.min
 import kotlin.system.measureTimeMillis
-import com.example.unipicdev.supportedExtension
+import com.example.unipicdev.supportedExtensions
 
 @SuppressLint("CheckResult")
 fun showFullImage(file: File, context: Context, imageView: ImageView, animateGifs: Boolean = false){
@@ -170,7 +170,7 @@ class ImageFactory {
 
         val files = folder.listFiles()
         for (currentFile in files) {
-            if (currentFile.isFile && supportedExtension.contains(currentFile.extension)) {
+            if (currentFile.isFile && currentFile.isMediaFile()) {
                 val bmOptions = BitmapFactory.Options()
                 bitmap = getThumbnail(currentFile.absolutePath, size)
                 break
@@ -179,7 +179,7 @@ class ImageFactory {
         return bitmap
     }
 
-    //private fun isMediaFile(file: File): Boolean = supportedExtension.contains(file.extension)
+    //private fun isMediaFile(file: File): Boolean = supportedExtensions.contains(file.extension)
 
     private fun getBitmap(path: String): Bitmap? {
         var bitmap: Bitmap? = null
