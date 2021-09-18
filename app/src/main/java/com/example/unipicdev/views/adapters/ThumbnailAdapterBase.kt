@@ -16,10 +16,10 @@ import com.example.unipicdev.R
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.SortingType.*
+import com.example.unipicdev.views.controls.GalleryRecyclerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
 
 enum class SortingType{
@@ -32,6 +32,7 @@ enum class Order{
 
 abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailHolder>(
     var activity: AppCompatActivity,
+    var recyclerView: GalleryRecyclerView,
     var files: MutableList<ThumbnailModel>,
     private val size: Int,
     private var onClickListener: ItemOnClickListener)
@@ -64,7 +65,7 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     private var actBarTextView: TextView? = null
     private var selectionCounter = ""
     private val dataSaver = DataSaver()
-    private lateinit var recyclerView: RecyclerView
+    //private lateinit var recyclerView: GalleryRecyclerView
 
     abstract val actionMenuId: Int
 
@@ -152,66 +153,70 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     override fun onBindViewHolder(viewHolder: HolderType, position: Int) {
         val item = files[position]
         viewHolder.itemView.setTag(R.id.tag_item, position)
+        viewHolder.itemView.tag = viewHolder
 
-        fun select(){
-            if ( viewHolder.checkCircle.visibility == View.INVISIBLE){
+        fun toggleSelection(){
+            val _item = files[position]
+            fun select(){
                 viewHolder.checkCircle.visibility = View.VISIBLE
-                files[position].isChecked = true
+                _item.isChecked = true
                 selectedItems.add(item)
 
                 updateTitle()
             }
-            else{
+            fun unselect(){
                 viewHolder.checkCircle.visibility = View.INVISIBLE
-                files[position].isChecked = false
+                _item.isChecked = false
                 selectedItems.remove(item)
 
-                if(selectedItems.count() == 0){
+                if(selectedItems.count() == 0)
                     actionMode?.finish()
-                }
-                else{
-                    updateTitle()
-                }
+                else updateTitle()
             }
+
+            if ( viewHolder.checkCircle.visibility == View.INVISIBLE)
+                select()
+            else unselect()
         }
 
-        viewHolder.checkCircle.visibility = View.INVISIBLE
-
-        viewHolder.imageView.setOnClickListener{
+        fun onClick(view: View){
             if (selectionMode || dragMode){
                 if(actionMode == null)
                     startActionMode()
-                select()
+                toggleSelection()
             }
             else {
                 var pos: Int = 0
-                if(it.getTag(R.id.tag_item) != null) {
-                    pos = it.getTag(R.id.tag_item) as Int
+                if(view.getTag(R.id.tag_item) != null) {
+                    pos = view.getTag(R.id.tag_item) as Int
                 }
                 onClickListener.onClick(item.file.absolutePath, pos)
             }
         }
 
-        viewHolder.imageView.setOnLongClickListener {
+        fun onLongClick(view: View): Boolean{
             if(!dragMode) {
                 selectionMode = true
-                select()
+                toggleSelection()
             }
 
             if (actionMode == null && !dragMode)
                 startActionMode()
 
-            return@setOnLongClickListener true
+            val pos = viewHolder.layoutPosition
+            recyclerView.setDragSelectActive(pos)
+
+            return true
         }
+
+        viewHolder.imageView.setOnClickListener(::onClick)
+        viewHolder.imageView.setOnLongClickListener(::onLongClick)
 
         setLayoutSize(viewHolder.mainLayout, size)
         viewHolder.nameTV.text = item.file.name
+
         if(files[position].isChecked)
             viewHolder.checkCircle.visibility = View.VISIBLE
-    }
-
-    private fun onItemClick(view: View) {
-
     }
 
     override fun getItemCount(): Int {
@@ -221,7 +226,7 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
-        this.recyclerView = recyclerView
+        //this.recyclerView = recyclerView
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
                 ItemTouchHelper.START or ItemTouchHelper.END or ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -236,7 +241,7 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int){}
 
             override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-                this@ThumbnailAdapterBase.clearView(recyclerView, viewHolder)
+                //this@ThumbnailAdapterBase.clearView(recyclerView, viewHolder)
                 super.clearView(recyclerView, viewHolder)
             }
 
@@ -316,6 +321,19 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
     }
 
+    protected fun selectItem(position: Int){
+
+    }
+
+    protected fun unselectItem(position: Int){
+
+    }
+
+    protected fun toggleItemSelection(position: Int){
+        val item = files[position]
+        item.isChecked = !item.isChecked
+    }
+
     protected fun selectAll(){
         for ((i, _) in files.withIndex()){
             files[i].isChecked = true
@@ -357,5 +375,28 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
 
     private fun updateTitle(){
         actBarTextView?.text = selectedCount
+    }
+
+    protected fun setupDragListener(enable: Boolean) {
+        if (enable) {
+            recyclerView.setupDragListener(object : GalleryRecyclerView.MyDragListener {
+                override fun selectItem(position: Int) {
+                    val i = 1
+                    //toggleItemSelection(position)
+                    //toggleItemSelection(true, position, true)
+                }
+
+                override fun selectRange(initialSelection: Int, lastDraggedIndex: Int, minReached: Int, maxReached: Int) {
+                    val i = 2
+
+//                    selectItemRange(initialSelection, Math.max(0, lastDraggedIndex - positionOffset), Math.max(0, minReached - positionOffset), maxReached - positionOffset)
+//                    if (minReached != maxReached) {
+//                        lastLongPressedItem = -1
+//                    }
+                }
+            })
+        } else {
+            recyclerView.setupDragListener(null)
+        }
     }
 }

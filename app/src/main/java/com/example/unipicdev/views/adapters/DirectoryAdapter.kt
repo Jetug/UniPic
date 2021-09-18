@@ -14,13 +14,14 @@ import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.models.isHidden
 import com.example.unipicdev.models.room.DatabaseApi
+import com.example.unipicdev.views.controls.GalleryRecyclerView
 import com.example.unipicdev.views.dialogs.DeletingDialog
 import com.example.unipicdev.views.dialogs.PropertiesDialog
 import kotlinx.coroutines.*
 
 @RequiresApi(Build.VERSION_CODES.O)
-class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<ThumbnailModel>, private val size: Int, onClickListener: ItemOnClickListener)
-    : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, dirs, size, onClickListener)
+class DirectoryAdapter(activity: AppCompatActivity, recyclerView: GalleryRecyclerView, dirs: MutableList<ThumbnailModel>, private val size: Int, onClickListener: ItemOnClickListener)
+    : ThumbnailAdapterBase<DirectoryAdapter.FolderHolder>(activity, recyclerView, dirs, size, onClickListener)
 {
     private val imageCreator = ImageFactory()
 
@@ -49,6 +50,8 @@ class DirectoryAdapter(activity: AppCompatActivity, dirs: MutableList<ThumbnailM
         }
 
     init{
+        setupDragListener(true)
+
         sort(directorySortingType, directorySortingOrder)
         DatabaseApi.addOnMediaSortingSaved {
             for (i in 0 until files.size) {

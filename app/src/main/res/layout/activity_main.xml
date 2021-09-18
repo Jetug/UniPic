@@ -8,7 +8,7 @@
     tools:context=".views.activities.MainActivity">
 
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.example.unipicdev.views.controls.GalleryRecyclerView
         android:id="@+id/dndRV"
         android:layout_width="0dp"
         android:layout_height="0dp"

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".views.activities.MediaGalleryActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.example.unipicdev.views.controls.GalleryRecyclerView
         android:id="@+id/imagesDRV"
         android:layout_width="0dp"
         android:layout_height="0dp"

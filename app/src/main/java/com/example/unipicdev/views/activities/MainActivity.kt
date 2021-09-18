@@ -4,11 +4,9 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.CompoundButton
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,15 +16,13 @@ import com.example.unipicdev.appContext
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.DirectoryAdapter
-import com.example.unipicdev.views.adapters.SortingType
+import com.example.unipicdev.views.controls.GalleryRecyclerView
 import com.example.unipicdev.views.dialogs.SortingDialog
-import com.google.android.material.switchmaterial.SwitchMaterial
 //import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.system.measureTimeMillis
 
 
 class MainActivity : BaseActivity() {
@@ -100,9 +96,9 @@ class MainActivity : BaseActivity() {
         val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        val dndRV = findViewById<RecyclerView>(R.id.dndRV)
-        dndRV.layoutManager = linearLayoutManager
-        dndRV.setHasFixedSize(true)
+        val recyclerView = findViewById<GalleryRecyclerView>(R.id.dndRV)
+        recyclerView.layoutManager = linearLayoutManager
+        recyclerView.setHasFixedSize(true)
 
         val size: DisplayMetrics = getDisplaySize(mainActivity)
         val width = size.widthPixels / colCount
@@ -110,11 +106,11 @@ class MainActivity : BaseActivity() {
         //val savedDirs = directorySearcher.getSavedDirectories().toThumbnailMutableList()
         val savedDirs = mutableListOf<ThumbnailModel>()
 
-        val adapter = DirectoryAdapter(this, savedDirs, width, object : ItemOnClickListener {
+        val adapter = DirectoryAdapter(this, recyclerView, savedDirs, width, object : ItemOnClickListener {
             override fun onClick(path: String, pos: Int) = folderItemOnClick(path, pos)
         })
         withContext(Dispatchers.Main){
-            dndRV.adapter = adapter
+            recyclerView.adapter = adapter
         }
         folderAdapter = adapter
 

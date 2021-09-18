@@ -8,7 +8,6 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.CompoundButton
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,16 +19,12 @@ import com.alexvasilkov.gestures.transition.tracker.SimpleTracker
 import com.example.unipicdev.R
 import com.example.unipicdev.models.MediaSearcher
 import com.example.unipicdev.models.ThumbnailModel
-import com.example.unipicdev.models.room.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.MediaAdapter
 import com.example.unipicdev.views.adapters.OnPaintingClickListener
 import com.example.unipicdev.views.adapters.PagerAdapter
+import com.example.unipicdev.views.controls.GalleryRecyclerView
 import com.example.unipicdev.views.dialogs.SortingDialog
-import com.google.android.material.switchmaterial.SwitchMaterial
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 //import kotlinx.android.synthetic.main.activity_image_gallery.*
 import java.io.File
 
@@ -49,6 +44,7 @@ class MediaGalleryActivity : BaseActivity(){
     private lateinit var pagerAdapter: PagerAdapter
     private lateinit var animator: ViewsTransitionAnimator<Int>
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_gallery)
@@ -92,11 +88,11 @@ class MediaGalleryActivity : BaseActivity(){
         val linearLayoutManager = GridLayoutManager(applicationContext, colCount)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        val imagesDRV = findViewById<RecyclerView>(R.id.imagesDRV)
-        imagesDRV.layoutManager = linearLayoutManager
-        imagesDRV.setHasFixedSize(true)
+        val recyclerView = findViewById<GalleryRecyclerView>(R.id.imagesDRV)
+        recyclerView.layoutManager = linearLayoutManager
+        recyclerView.setHasFixedSize(true)
 
-        list = imagesDRV
+        list = recyclerView
         //imagesDRV.orientation = DragDropSwipeRecyclerView.ListOrientation.HORIZONTAL_LIST_WITH_UNCONSTRAINED_DRAGGING
 
         dirPath = intent.getCharSequenceExtra("dirPath")as String
@@ -110,7 +106,8 @@ class MediaGalleryActivity : BaseActivity(){
 
         val size: DisplayMetrics = getDisplaySize(this)
         val width = size.widthPixels / colCount
-        val adapter = MediaAdapter(this, imagesList, width, dirPath, object : ItemOnClickListener {
+
+        val itemOnClickListener = object : ItemOnClickListener {
             override fun onClick(path: String, position: Int) {
                 val imageActivityIntent = Intent(imageGalleryActivity, MediaViewerActivity::class.java)
                 val buffList = mutableListOf<File>()
@@ -135,16 +132,17 @@ class MediaGalleryActivity : BaseActivity(){
 
                 startActivity(imageActivityIntent)
             }
-        },
-        object: OnPaintingClickListener{
+        }
+
+        val onPaintingClickListener = object: OnPaintingClickListener{
             override fun onPaintingClick(position: Int) {
                 onPaintingClick2(position)
             }
-        })
+        }
 
+        val adapter = MediaAdapter(this, recyclerView, imagesList, width, dirPath, itemOnClickListener, onPaintingClickListener)
 
-
-        imagesDRV.adapter = adapter
+        recyclerView.adapter = adapter
         imageAdapter = adapter
 
         ////////////////////////////////////////////////////////////////////////////////////

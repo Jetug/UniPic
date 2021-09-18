@@ -15,6 +15,7 @@ import com.example.unipicdev.*
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.models.room.DatabaseApi
+import com.example.unipicdev.views.controls.GalleryRecyclerView
 import com.example.unipicdev.views.dialogs.DateEditingDialog
 import com.example.unipicdev.views.dialogs.*
 import java.io.File
@@ -22,21 +23,25 @@ import kotlin.system.measureTimeMillis
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-class MediaAdapter(activity: AppCompatActivity, medias: MutableList<ThumbnailModel>,
+class MediaAdapter(activity: AppCompatActivity,
+                   recyclerView: GalleryRecyclerView,
+                   medias: MutableList<ThumbnailModel>,
                    private var size: Int,
                    private val directory: String,
                    onClickListener: ItemOnClickListener,
                    private val listener: OnPaintingClickListener
 )
-    : ThumbnailAdapterBase<MediaAdapter.MediaHolder>(activity, medias, size, onClickListener)
+    : ThumbnailAdapterBase<MediaAdapter.MediaHolder>(activity, recyclerView, medias, size, onClickListener)
 {
     private val dataSaver = DataSaver()
-    private val imageCreator = ImageFactory()
+    private val imageCreator = ImageFactory() 
 
     override val actionMenuId: Int
         get() = R.menu.menu_media_work
 
     init{
+        setupDragListener(true)
+
         val pair = DatabaseApi.getMediaSorting(directory)
         val sorting: SortingType = getNotNoneSortingType(pair.first)
         val order: Order = getNotNoneSortingOrder(pair.second)
