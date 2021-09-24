@@ -40,7 +40,7 @@ class MediaAdapter(activity: AppCompatActivity,
         get() = R.menu.menu_media_work
 
     init{
-        setupDragListener(true)
+        //setupDragListener(true)
 
         val pair = DatabaseApi.getMediaSorting(directory)
         val sorting: SortingType = getNotNoneSortingType(pair.first)

@@ -107,7 +107,7 @@ class MainActivity : BaseActivity() {
         val savedDirs = mutableListOf<ThumbnailModel>()
 
         val adapter = DirectoryAdapter(this, recyclerView, savedDirs, width, object : ItemOnClickListener {
-            override fun onClick(path: String, pos: Int) = folderItemOnClick(path, pos)
+            override fun onClick(path: String, position: Int) = folderItemOnClick(path, position)
         })
         withContext(Dispatchers.Main){
             recyclerView.adapter = adapter
@@ -121,7 +121,7 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        directorySearcher.getDirectories(::addFolderItem)
+         directorySearcher.getDirectories(::addFolderItem)
     }
 
     private fun folderItemOnClick(path: String, pos:Int){

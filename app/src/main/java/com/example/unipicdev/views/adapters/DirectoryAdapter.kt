@@ -50,7 +50,7 @@ class DirectoryAdapter(activity: AppCompatActivity, recyclerView: GalleryRecycle
         }
 
     init{
-        setupDragListener(true)
+        //setupDragListener(true)
 
         sort(directorySortingType, directorySortingOrder)
         DatabaseApi.addOnMediaSortingSaved {

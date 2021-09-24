@@ -102,4 +102,5 @@ dependencies {
 //
 //    // optional - Paging 3 Integration
 //    implementation("androidx.room:room-paging:2.4.0-alpha04")
+    implementation 'com.github.MFlisar:DragSelectRecyclerView:0.3'
 }
