@@ -5,7 +5,6 @@ import android.os.Build
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -60,7 +59,6 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     protected val selectedItems: MutableList<ThumbnailModel> = mutableListOf()
     protected val allFiles: MutableList<ThumbnailModel> = mutableListOf()
     protected val resources = activity.resources!!
-    protected var positionOffset = 0
     protected val layoutInflater: LayoutInflater = activity.layoutInflater
     protected var actionMode: ActionMode? = null
     protected var actionModeCallback: ActionMode.Callback
@@ -97,23 +95,9 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     abstract fun prepareActionMode(menu: Menu)
     abstract fun actionItemPressed(id: Int)
 
-    private fun enterSelectionMode(){
-        if(actionMode == null) {
-            startActionMode()
-        }
-    }
 
-    private fun exitSelectionMode(){
-        if(actionMode != null){
-            finishActionMode()
-        }
-        unselectAll()
-        dragMode = false
-    }
 
     init {
-        //setupDragListener(true)
-
         actionModeCallback = object: ActionMode.Callback {
             override fun onActionItemClicked(mode: android.view.ActionMode?, item: MenuItem?): Boolean {
                 if(item != null)
@@ -200,35 +184,9 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         viewHolder.checkCircle.visibility = if(files[position].isChecked) View.VISIBLE else View.INVISIBLE
     }
 
-    private fun toggleSelection(position: Int){
-        val item = files[position]
-        fun select(){
-            item.isChecked = true
-            selectedItems.add(item)
-
-            updateTitle()
-        }
-
-        fun unselect(){
-            item.isChecked = false
-            selectedItems.remove(item)
-
-            if(selectedItems.count() == 0 && !dragMode)
-                actionMode?.finish()
-            else updateTitle()
-        }
-
-        if (!item.isChecked)
-            select()
-        else unselect()
-
-        notifyItemChanged(position)
-    }
-
     override fun getItemCount(): Int {
         return files.size
     }
-
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -301,6 +259,48 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
     }
 
+    private fun enterSelectionMode(){
+        if(actionMode == null) {
+            startActionMode()
+        }
+    }
+
+    private fun exitSelectionMode(){
+        if(actionMode != null){
+            finishActionMode()
+        }
+        unselectAll()
+        dragMode = false
+    }
+
+    private fun select(position: Int){
+        val item = files[position]
+        item.isChecked = true
+        selectedItems.add(item)
+
+        updateTitle()
+    }
+
+    private fun unselect(position: Int){
+        val item = files[position]
+        item.isChecked = false
+        selectedItems.remove(item)
+
+        if(selectedItems.count() == 0 && !dragMode)
+            actionMode?.finish()
+        else updateTitle()
+    }
+
+    private fun toggleSelection(position: Int){
+        val item = files[position]
+
+        if (!item.isChecked)
+            select(position)
+        else unselect(position)
+
+        notifyItemChanged(position)
+    }
+
     private fun getPositionOfItem(item: Any, list: List<Any>): Int{
         for (i in list.indices){
             if (list[i] == item) {
@@ -349,21 +349,9 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
     }
 
-//    protected fun toggleItemSelection(position: Int){
-//        val item = files[position]
-//        item.isChecked = !item.isChecked
-//        notifyItemChanged(position)
-//    }
-//
-//    protected fun toggleItemRangeSelection(from: Int, to: Int){
-//        for (pos in from+1..to ){
-//            toggleItemSelection(pos)
-//        }
-//    }
-
     open fun selectRange(start: Int, end: Int, selected: Boolean) {
         for (i in start..end) {
-            if (selected) selectItem(i) else unselectItem(i)
+            if (selected) select(i) else unselect(i)
         }
         notifyItemRangeChanged(start, end - start + 1)
     }
@@ -376,7 +364,6 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         selectedItems.clear()
         selectedItems.addAll(files)
 
-        //selectionMode = true
         updateTitle()
     }
 
@@ -411,98 +398,7 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         actBarTextView?.text = selectedCount
     }
 
-    var offset = -1
-
-    protected fun setupDragListener(enable: Boolean) {
-        if (enable) {
-            recyclerView.setupDragListener(object : GalleryRecyclerView.MyDragListener {
-                override fun selectItem(position: Int) {
-                    val i = 1
-                    //toggleItemSelection(position)
-                    //toggleItemSelection(true, position, true)
-                }
-
-                override fun selectRange(initialSelection: Int, lastDraggedIndex: Int, minReached: Int, maxReached: Int) {
-                    val i = 2
-                    //Toast.makeText(activity, "$initialSelection | $lastDraggedIndex min: $minReached, max: $maxReached", Toast.LENGTH_SHORT).show()
-
-                    selectItemRange(initialSelection, Math.max(0, lastDraggedIndex - positionOffset), Math.max(0, minReached - positionOffset), maxReached - positionOffset)
-                }
-            })
-        } else {
-            recyclerView.setupDragListener(null)
-        }
-    }
-
-    private fun toggleItemSelection(select: Boolean, pos: Int, updateTitle: Boolean = true) {
-        if (select) {
-            selectItem(pos)
-        } else {
-            unselectItem(pos)
-        }
-
-        notifyItemChanged(pos + positionOffset)
-
-        if (updateTitle) {
-            updateTitle()
-        }
-
-        if(selectedItems.isEmpty())
-            actionMode?.finish()
-    }
-
-    fun selectItem(position: Int){
-        setItemSelection(position, true)
-    }
-
-    fun unselectItem(position: Int) {
-        setItemSelection(position, false)
-    }
-
-    private fun setItemSelection(position: Int, isSelected:Boolean){
-        val item = files[position]
-        item.isChecked = isSelected
-        notifyItemChanged(position)
-    }
-
     private fun isItemSelected(pos: Int):Boolean{
         return files[pos].isChecked
-    }
-
-    fun selectItemRange(from: Int, to: Int, min: Int, max: Int) {
-        if (from == to) {
-            (min..max).filter { it != from }.forEach { toggleItemSelection(false, it, true) }
-            return
-        }
-
-        if (to < from) {
-            for (i in to..from) {
-                toggleItemSelection(true, i, true)
-            }
-
-            if (min > -1 && min < to) {
-                (min until to).filter { it != from }.forEach { toggleItemSelection(false, it, true) }
-            }
-
-            if (max > -1) {
-                for (i in from + 1..max) {
-                    toggleItemSelection(false, i, true)
-                }
-            }
-        } else {
-            for (i in from..to) {
-                toggleItemSelection(true, i, true)
-            }
-
-            if (max > -1 && max > to) {
-                (to + 1..max).filter { it != from }.forEach { toggleItemSelection(false, it, true) }
-            }
-
-            if (min > -1) {
-                for (i in min until from) {
-                    toggleItemSelection(false, i, true)
-                }
-            }
-        }
     }
 }
