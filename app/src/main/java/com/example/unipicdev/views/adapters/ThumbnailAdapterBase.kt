@@ -1,6 +1,7 @@
 package com.example.unipicdev.views.adapters
 
 import android.annotation.SuppressLint
+import android.app.DialogFragment
 import android.os.Build
 import android.view.*
 import android.widget.ImageView
@@ -12,16 +13,21 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.unipicdev.R
 import com.example.unipicdev.models.*
 import com.example.unipicdev.models.interfaces.ItemOnClickListener
 import com.example.unipicdev.views.adapters.SortingType.*
+import com.example.unipicdev.views.adapters.ThumbnailAdapterBase.*
 import com.example.unipicdev.views.controls.GalleryRecyclerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.michaelflisar.dragselectrecyclerview.DragSelectTouchListener
 import com.michaelflisar.dragselectrecyclerview.DragSelectTouchListener.OnAdvancedDragSelectListener
+import com.simplemobiletools.commons.adapters.MyRecyclerViewAdapter
+import com.simplemobiletools.commons.extensions.applyColorFilter
+import com.simplemobiletools.commons.extensions.baseConfig
 
 
 enum class SortingType{
@@ -32,7 +38,7 @@ enum class Order{
     NONE, ASCENDING, DESCENDING
 }
 
-abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailHolder>(
+abstract class ThumbnailAdapterBase<HolderType : ThumbnailHolder>(
     var activity: AppCompatActivity,
     var recyclerView: GalleryRecyclerView,
     var files: MutableList<ThumbnailModel>,
@@ -40,11 +46,24 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     private var onClickListener: ItemOnClickListener)
     :RecyclerView.Adapter<HolderType>()
 {
-    open class ThumbnailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    open class ThumbnailHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
         val nameTV: TextView = itemView.findViewById<View>(R.id.nameTV) as TextView
         val imageView: ImageView = itemView.findViewById<View>(R.id.imageIV) as ImageView
         val mainLayout = itemView.findViewById<View>(R.id.mainLayout) as ConstraintLayout
         val checkCircle = itemView.findViewById<View>(R.id.checkCircle) as ImageView
+        val dragHandle = itemView.findViewById<View>(R.id.dir_drag_handle) as ImageView
+
+        override fun onClick(view: View) {
+            //onItemClick(view, adapterPosition)
+        }
+        override fun onLongClick(view: View): Boolean {
+            return true
+        }
+
+        init {
+            itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
+        }
     }
 
     protected val selectedItem: ThumbnailModel
@@ -61,13 +80,15 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
     protected val resources = activity.resources!!
     protected val layoutInflater: LayoutInflater = activity.layoutInflater
     protected var actionMode: ActionMode? = null
-    protected var actionModeCallback: ActionMode.Callback
 
+    private val baseConfig = activity.baseConfig
+    private var textColor = baseConfig.textColor
+    private var actionModeCallback: ActionMode.Callback
     private var actBarTextView: TextView? = null
     private var selectionCounter = ""
     private val dataSaver = DataSaver()
     private lateinit var mDragSelectTouchListener: DragSelectTouchListener
-    //private lateinit var recyclerView: GalleryRecyclerView
+    private lateinit var itemTouchHelper:ItemTouchHelper
 
     abstract val actionMenuId: Int
 
@@ -86,16 +107,16 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
 
     var dragMode:Boolean = false
+        @SuppressLint("NotifyDataSetChanged")
         set(value) {
             if (value)
                 selectionMode = true
+                notifyDataSetChanged()
             field = value
         }
 
     abstract fun prepareActionMode(menu: Menu)
     abstract fun actionItemPressed(id: Int)
-
-
 
     init {
         actionModeCallback = object: ActionMode.Callback {
@@ -140,82 +161,77 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
         }
     }
 
+    private fun onItemClick(view: View, position: Int){
+        if (selectionMode || dragMode){
+            if(actionMode == null)
+                startActionMode()
+            toggleSelection(position)
+        }
+        else {
+            var pos: Int = 0
+            val item = files[position]
+            if(view.getTag(R.id.tag_item) != null) {
+                pos = view.getTag(R.id.tag_item) as Int
+            }
+            onClickListener.onClick(item.file.absolutePath, pos)
+        }
+    }
+
+    private fun onItemLongClick(view: View, position: Int): Boolean{
+        if(!dragMode) {
+            selectionMode = true
+            toggleSelection(position)
+        }
+
+        if (actionMode == null && !dragMode)
+            startActionMode()
+
+        recyclerView.setDragSelectActive(position)
+        mDragSelectTouchListener.startDragSelection(position);
+        return true
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(viewHolder: HolderType, position: Int) {
         val item = files[position]
         viewHolder.itemView.setTag(R.id.tag_item, position)
         viewHolder.itemView.tag = viewHolder
-
-        fun onClick(view: View){
-            if (selectionMode || dragMode){
-                if(actionMode == null)
-                    startActionMode()
-                toggleSelection(position)
-            }
-            else {
-                var pos: Int = 0
-                if(view.getTag(R.id.tag_item) != null) {
-                    pos = view.getTag(R.id.tag_item) as Int
-                }
-                onClickListener.onClick(item.file.absolutePath, pos)
-            }
+        viewHolder.imageView.setOnClickListener { onItemClick(it, position) }
+        viewHolder.imageView.setOnLongClickListener{ onItemLongClick(it, position) }
+        viewHolder.dragHandle.setOnTouchListener { _, _ ->
+            itemTouchHelper.startDrag(viewHolder)
+            false
         }
-
-        fun onLongClick(view: View): Boolean{
-            if(!dragMode) {
-                selectionMode = true
-                toggleSelection(position)
-            }
-
-            if (actionMode == null && !dragMode)
-                startActionMode()
-
-            val pos = viewHolder.layoutPosition
-            recyclerView.setDragSelectActive(pos)
-            mDragSelectTouchListener.startDragSelection(pos);
-            return true
-        }
-
-        viewHolder.imageView.setOnClickListener(::onClick)
-        viewHolder.imageView.setOnLongClickListener(::onLongClick)
-
         setLayoutSize(viewHolder.mainLayout, size)
         viewHolder.nameTV.text = item.file.name
-
         viewHolder.checkCircle.visibility = if(files[position].isChecked) View.VISIBLE else View.INVISIBLE
+        //viewHolder.dragHandle.visibility = if(dragMode) View.VISIBLE else View.INVISIBLE
+
+        if(dragMode){
+            viewHolder.dragHandle.visibility = View.VISIBLE
+            viewHolder.dragHandle.applyColorFilter(textColor)
+        }
+        else viewHolder.dragHandle.visibility = View.INVISIBLE
+    }
+
+    override fun onViewRecycled(holder: HolderType) {
+        super.onViewRecycled(holder)
+        if (!activity.isDestroyed) {
+            Glide.with(activity).clear(holder.imageView)
+        }
     }
 
     override fun getItemCount(): Int {
         return files.size
     }
 
+
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
-        //this.recyclerView = recyclerView
+        val itemTouchHelperCallback = ItemMoveCallback()
 
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.START or ItemTouchHelper.END or ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                0)
-        {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean
-            {
-                swapItems(viewHolder.adapterPosition, target.adapterPosition)
-                return true
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int){}
-
-            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-                //this@ThumbnailAdapterBase.clearView(recyclerView, viewHolder)
-                super.clearView(recyclerView, viewHolder)
-            }
-
-            override fun isLongPressDragEnabled(): Boolean {
-                return dragMode
-            }
-        }
-
-        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         val onDragSelectionListener = object : OnAdvancedDragSelectListener {
@@ -362,7 +378,7 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
             notifyItemChanged(i)
         }
         selectedItems.clear()
-        selectedItems.addAll(files)
+        selectedItems.addAll(files)f
 
         updateTitle()
     }
@@ -400,5 +416,26 @@ abstract class ThumbnailAdapterBase<HolderType : ThumbnailAdapterBase.ThumbnailH
 
     private fun isItemSelected(pos: Int):Boolean{
         return files[pos].isChecked
+    }
+
+    inner class ItemMoveCallback: ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.START or ItemTouchHelper.END or ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+        0)
+    {
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean
+        {
+            swapItems(viewHolder.adapterPosition, target.adapterPosition)
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int){}
+
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+        }
+
+        override fun isLongPressDragEnabled(): Boolean {
+            return false//dragMode
+        }
     }
 }

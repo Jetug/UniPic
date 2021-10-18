@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".views.dialogs.DateEditingDialog">
 
-
     <TextView
         android:id="@+id/textView2"
         android:layout_width="116dp"
@@ -69,85 +68,85 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--    <LinearLayout-->
-    <!--        android:layout_width="0dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_weight="1"-->
-    <!--        android:orientation="vertical">-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:orientation="vertical">-->
 
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:orientation="horizontal">-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="horizontal">-->
 
-    <!--           -->
-    <!--            -->
-    <!--        </LinearLayout>-->
-    <!--        -->
-    <!--        -->
+<!--               -->
+<!--                -->
+<!--            </LinearLayout>-->
+<!--            -->
+<!--            -->
 
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:orientation="vertical">-->
-    <!--            <LinearLayout-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="match_parent"-->
-    <!--                android:orientation="horizontal">-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical">-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:orientation="horizontal">-->
 
-    <!--                    <LinearLayout-->
-    <!--                        android:layout_width="wrap_content"-->
-    <!--                        android:layout_height="wrap_content"-->
-    <!--                        android:orientation="horizontal">-->
-    <!--                        <TextView-->
-    <!--                            android:layout_width="110dp"-->
-    <!--                            android:layout_height="35dp"-->
-    <!--                            android:gravity="center_horizontal"-->
-    <!--                            android:text="Шаг" />-->
+<!--                        <LinearLayout-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:orientation="horizontal">-->
+<!--                            <TextView-->
+<!--                                android:layout_width="110dp"-->
+<!--                                android:layout_height="35dp"-->
+<!--                                android:gravity="center_horizontal"-->
+<!--                                android:text="Шаг" />-->
 
-    <!--                        <EditText-->
-    <!--                            android:id="@+id/step_day"-->
-    <!--                            android:layout_width="40dp"-->
-    <!--                            android:layout_height="wrap_content"-->
-    <!--                            android:inputType="number"/>-->
-    <!--                        <EditText-->
-    <!--                            android:id="@+id/step_month"-->
-    <!--                            android:layout_width="40dp"-->
-    <!--                            android:layout_height="wrap_content"-->
-    <!--                            android:inputType="number"/>-->
-    <!--                        <EditText-->
-    <!--                            android:id="@+id/step_year"-->
-    <!--                            android:layout_width="60dp"-->
-    <!--                            android:layout_height="wrap_content"-->
-    <!--                            android:inputType="number"/>-->
-    <!--                </LinearLayout>-->
+<!--                            <EditText-->
+<!--                                android:id="@+id/step_day"-->
+<!--                                android:layout_width="40dp"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:inputType="number"/>-->
+<!--                            <EditText-->
+<!--                                android:id="@+id/step_month"-->
+<!--                                android:layout_width="40dp"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:inputType="number"/>-->
+<!--                            <EditText-->
+<!--                                android:id="@+id/step_year"-->
+<!--                                android:layout_width="60dp"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:inputType="number"/>-->
+<!--                    </LinearLayout>-->
 
-    <!--                <LinearLayout-->
-    <!--                    android:layout_width="wrap_content"-->
-    <!--                    android:layout_height="wrap_content"-->
-    <!--                    android:orientation="horizontal">-->
-    <!--                    <EditText-->
-    <!--                        android:id="@+id/step_hour"-->
-    <!--                        android:layout_width="40dp"-->
-    <!--                        android:layout_height="wrap_content"-->
-    <!--                        android:inputType="number"/>-->
-    <!--                    <EditText-->
-    <!--                        android:id="@+id/step_minute"-->
-    <!--                        android:layout_width="40dp"-->
-    <!--                        android:layout_height="wrap_content"-->
-    <!--                        android:inputType="number"/>-->
-    <!--                    <EditText-->
-    <!--                        android:id="@+id/step_second"-->
-    <!--                        android:layout_width="40dp"-->
-    <!--                        android:layout_height="wrap_content"-->
-    <!--                        android:inputType="number"/>-->
-    <!--                </LinearLayout>-->
-    <!--                <Button-->
-    <!--                    android:layout_width="wrap_content"-->
-    <!--                    android:layout_height="wrap_content"-->
-    <!--                    android:gravity="center_horizontal"-->
-    <!--                    android:text="+" />-->
-    <!--            </LinearLayout>-->
-    <!--        </LinearLayout>-->
-    <!--    </LinearLayout>-->
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:orientation="horizontal">-->
+<!--                        <EditText-->
+<!--                            android:id="@+id/step_hour"-->
+<!--                            android:layout_width="40dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:inputType="number"/>-->
+<!--                        <EditText-->
+<!--                            android:id="@+id/step_minute"-->
+<!--                            android:layout_width="40dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:inputType="number"/>-->
+<!--                        <EditText-->
+<!--                            android:id="@+id/step_second"-->
+<!--                            android:layout_width="40dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:inputType="number"/>-->
+<!--                    </LinearLayout>-->
+<!--                    <Button-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center_horizontal"-->
+<!--                        android:text="+" />-->
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
+<!--        </LinearLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

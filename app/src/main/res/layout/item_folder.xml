@@ -58,4 +58,20 @@
         app:srcCompat="@drawable/ic_checkmark_24"
         tools:ignore="ContentDescription" />
 
+
+    <ImageView
+        android:id="@+id/dir_drag_handle"
+        android:layout_width="@dimen/drag_handle_size"
+        android:layout_height="@dimen/drag_handle_size"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/circle_black_background"
+        android:src="@drawable/ic_drag_handle_vector"
+        android:visibility="gone"
+        android:padding="@dimen/small_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
